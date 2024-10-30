@@ -1,0 +1,67 @@
+REVIEWERS: Review Platform
+This project is a review platform where users can register, write reviews about different businesses, vote on useful reviews, and accumulate points to earn rewards. It also includes functionalities for administrators to manage users and businesses within the system.
+
+Technologies Used
+Node.js with Express: Framework for building the backend.
+Prisma ORM: To manage the relational database (MySQL).
+MySQL: Relational database used.
+Bcrypt: For secure password handling (hashing).
+Nodemailer: Sending confirmation emails for registrations.
+SSH: Management of SSH keys for Git.
+Git: Version control system.
+Installation
+Clone the repository:
+
+bash
+Copiar código
+git clone https://github.com/Program0017/REVIEWERS.git
+cd REVIEWERS
+Install dependencies: Make sure you have Node.js installed, then run:
+
+bash
+Copiar código
+npm install
+Configure the database:
+
+Ensure MySQL is running and set up your connection URL in your .env file:
+bash
+Copiar código
+DATABASE_URL="mysql://user:password@localhost:3306/reviewers_db"
+Migrate the database using Prisma:
+
+bash
+Copiar código
+npx prisma migrate dev --name init
+Generate seeds (optional): If you want to seed your database with initial data, create a seed file and run:
+
+bash
+Copiar código
+npx prisma db seed
+Usage
+Start the server:
+
+bash
+Copiar código
+npm start
+API Endpoints:
+
+POST /register: Register a new user.
+GET /users: List all users (admin only).
+POST /reviews: Submit a review for a business.
+GET /businesses: List all businesses.
+POST /votes: Vote on a review.
+Features
+User registration with unique username and email.
+Password hashing for secure authentication.
+Email confirmation for account activation.
+Review submission for businesses with optional images.
+Voting system for marking reviews as helpful or not.
+Admin functionalities to manage users and businesses.
+Contributing
+Contributions are welcome! Please create a pull request for any enhancements or bug fixes.
+
+License
+This project is licensed under the MIT License.
+
+Contact
+For inquiries, please contact us

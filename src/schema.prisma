@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id          Int      @id @default(autoincrement())
+  username         String   @unique
+  email            String   @unique
+  password_hash    String
+  profile_picture_url String
+  bio              String
+  registration_date DateTime @default(now())
+  updated_date     DateTime
+  last_login       DateTime
+  tags             String
+  itsActive        Boolean  @default(true)
+  itsReported      Boolean  @default(false)
+  points           Int @default(0)
+
+  Review Review[]
+  Report Report[]
+}
+
+model Review {
+  review_id      Int      @id @default(autoincrement())
+  user_id        Int
+  user           User     @relation(fields: [user_id], references: [user_id])
+  business_id    Int
+  business       Business  @relation(fields: [business_id], references: [business_id])
+  rating         Int
+  title          String
+  content        String
+  image_url      String
+  creation_date  DateTime @default(now())
+  updated_date   DateTime @updatedAt
+  helpful_votes  Int      @default(0)
+  tags           String
+  itsHided       Boolean  @default(false)
+  itsReported     Boolean  @default(false)
+
+  Report Report[]
+}
+
+model Business {
+  business_id     Int      @id @default(autoincrement())
+  name            String   @unique
+  location        String
+  category        String
+  average_rating  Float    @default(0.00)
+  total_reviews   Int      @default(0)
+  contact_info    String
+  creation_date   DateTime @default(now())
+  updated_date    DateTime @updatedAt
+  tags            String
+  itsActive        Boolean  @default(true)
+  itsReported      Boolean  @default(false)
+
+  reviews         Review[]  // Relationship with Review
+}
+
+model Vote {
+  vote_id        Int      @id @default(autoincrement())
+  review_id      Int
+  user_id        Int
+  isHelpful      Boolean   // Enum can be defined if preferred
+  creation_date  DateTime @default(now())
+}
+
+model Reward {
+  reward_id          Int      @id @default(autoincrement())
+  user_id            Int
+  points_needed      Int
+  reward_description String
+  is_redeemed        Boolean  @default(false)
+  creation_date      DateTime @default(now())
+}
+
+model Report {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  reviewId    Int
+  reason      String
+  isActive    Boolean  @default(false)
+  reportDate  DateTime @default(now())
+  review      Review   @relation(fields: [reviewId], references: [review_id])
+  user        User     @relation(fields: [userId], references: [user_id])
+}
