@@ -17,6 +17,7 @@ const ERROR_MESSAGES = {
     REVIEWS_NOT_FOUND: "No reviews were found.",
     TOGGLE_REVIEW_FAILED: "Failed to change the review status.",
     REVIEW_NOT_UPDATED: "Failed to update the review.",
+    REVIEW_VALIDATION_FAILED:  "An error occurred while valadating the review for the business.",
 
     VOTE_ACTION_FAILED: "An error occurred while attempting to register or withdraw the vote.",
 
@@ -31,7 +32,12 @@ const ERROR_MESSAGES = {
     TOGGLE_BUSINESS_FAILED: "Failed to change the business status.",
     BUSINESSES_NOT_FOUND: "No business were found.",
 
-    MISSING_SEARCH_PARAMETERS: "Not found search parameters"
+    MISSING_SEARCH_PARAMETERS: "Not found search parameters",
+
+    REWARD_CREATION_FAILED: "An error occurred while creating the reward.",
+    REWARD_UPDATE_FAILED: "An error occurred while updatin the reward.",
+    REWARD_NOT_FOUND: "The specified reward could not be found.",
+    REWARDS_NOT_FOUND: "No rewards were found.",
 };
 
 module.exports = ERROR_MESSAGES;

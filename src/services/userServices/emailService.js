@@ -35,7 +35,23 @@ const sendConfirmationReportMail = async (userId, reviewId, reason) => {
     return await sendEmail(adminEmail, subject, text);
 };
 
+const sendRewardNotificationToAllUsers = async (users, rewardDescription) => {
+    const subject = 'Nueva Recompensa Creada';
+    
+    for (const user of users) {
+        const text = `¡Hola ${user.username}! Se ha creado una nueva recompensa: ${rewardDescription}. ¡Revisa tu cuenta para más detalles!`;
+
+        try {
+            await sendEmail(user.email, subject, text);
+            console.log(`Correo enviado correctamente a ${user.email}`);
+        } catch (error) {
+            console.error(`Error al enviar el correo a ${user.email}:`, error);
+        }
+    }
+}
+
 module.exports = {
     sendEmail,
-    sendConfirmationReportMail
+    sendConfirmationReportMail,
+    sendRewardNotificationToAllUsers
 };

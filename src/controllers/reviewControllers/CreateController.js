@@ -18,15 +18,17 @@ const createReview = async(req, res) =>{
             rating: reviewInput.rating,
             title: reviewInput.title,
             content: reviewInput.content,
-            image_url: reviewInput.image_url,
+            image_url: reviewInput.image_url || null,
             tags: reviewInput.tags,
             creation_date: new Date(),
-            updated_date: new Date()
+            updated_date: new Date(),
+            wasValidated: false
         });
 
         await updateBusinessReviewStats(review.business_id, review.rating);
 
-        await addRewardPoint(review.user_id)
+        const rewardPoints = review.image_url ? 2 : 1;
+        await addRewardPoint(review.user_id, rewardPoints);
 
 
         const reviewResponse = ReviewOutputDTO.format(review);

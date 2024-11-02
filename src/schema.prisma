@@ -15,15 +15,19 @@ model User {
   profile_picture_url String
   bio              String
   registration_date DateTime @default(now())
-  updated_date     DateTime
-  last_login       DateTime
+  updated_date     DateTime?
+  last_login       DateTime?
   tags             String
   itsActive        Boolean  @default(true)
   itsReported      Boolean  @default(false)
-  points           Int @default(0)
+  points           Int      @default(0)
 
-  Review Review[]
-  Report Report[]
+  reviews          Review[]        // Reseñas escritas por el usuario
+  reports          Report[]        // Reportes realizados por el usuario
+  Referral Referral[] @relation("Referrer")
+  Vote Vote[]
+
+  Reward Reward[] @relation("UserRewards")
 }
 
 model Review {
@@ -35,15 +39,17 @@ model Review {
   rating         Int
   title          String
   content        String
-  image_url      String
+  image_url      String?  // La imagen no es obligatoria
+  tags           String
+  wasValidated   Boolean
   creation_date  DateTime @default(now())
   updated_date   DateTime @updatedAt
   helpful_votes  Int      @default(0)
-  tags           String
   itsHided       Boolean  @default(false)
-  itsReported     Boolean  @default(false)
+  itsReported    Boolean  @default(false)
 
-  Report Report[]
+  reports        Report[]  // Reportes de la reseña
+  Vote Vote[]
 }
 
 model Business {
@@ -57,27 +63,36 @@ model Business {
   creation_date   DateTime @default(now())
   updated_date    DateTime @updatedAt
   tags            String
-  itsActive        Boolean  @default(true)
+  itsActive       Boolean  @default(true)
   itsReported      Boolean  @default(false)
 
-  reviews         Review[]  // Relationship with Review
+  reviews         Review[] // Relación con Review
 }
 
 model Vote {
   vote_id        Int      @id @default(autoincrement())
   review_id      Int
   user_id        Int
-  isHelpful      Boolean   // Enum can be defined if preferred
+  isHelpful      Boolean   // Indica si el voto es útil
   creation_date  DateTime @default(now())
+
+  review         Review    @relation(fields: [review_id], references: [review_id])
+  user           User      @relation(fields: [user_id], references: [user_id])
 }
 
 model Reward {
   reward_id          Int      @id @default(autoincrement())
-  user_id            Int
   points_needed      Int
   reward_description String
   is_redeemed        Boolean  @default(false)
   creation_date      DateTime @default(now())
+  redeemed_date      DateTime?
+  expiration_date    DateTime // Fecha de expiración de la recompensa
+  type               String   // Tipo de recompensa (p. ej., comida, viaje)
+  itsAvailable Boolean @default(true)
+
+  users User[] @relation("UserRewards")
+
 }
 
 model Report {
@@ -89,4 +104,13 @@ model Report {
   reportDate  DateTime @default(now())
   review      Review   @relation(fields: [reviewId], references: [review_id])
   user        User     @relation(fields: [userId], references: [user_id])
+}
+
+model Referral {
+  id          Int      @id @default(autoincrement())
+  referrer_id Int      // ID del usuario que hace la invitación
+  referred_id Int      // ID del amigo invitado
+  creation_date DateTime @default(now())
+
+  referrer    User     @relation("Referrer", fields: [referrer_id], references: [user_id])
 }

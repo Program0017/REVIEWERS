@@ -16,6 +16,20 @@ const reviewService = {
         });
     },
 
+    async validateReviewBusiness(reviewId, businessId) {
+        const review = await this.findReviewById(reviewId);
+        
+        if (!review) {
+            throw new Error('Review not found');
+        }
+
+        if (review.business_id !== businessId) {
+            throw new Error('Business ID does not match the review');
+        }
+
+        return review;
+    },
+
     async updateReview(reviewId, updatedData) {
         if (!reviewId) {
             throw new Error("El reviewId no puede ser undefined.");

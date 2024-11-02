@@ -3,7 +3,7 @@ const db = new PrismaClient();
 
 const userService = {
     // Crear usuario
-    async createUser(userData) {
+    async   createUser(userData) {
         return await db.user.create({ data: userData });
     },
 
@@ -67,7 +67,7 @@ const userService = {
 
     // Obtener todos los usuarios
     async getAllUsers() {
-        return await db.user.findMany({
+        const allUsers = await db.user.findMany({
             select: {
                 username: true,
                 email: true,
@@ -76,19 +76,25 @@ const userService = {
                 itsActive: true,
             },
         });
+
+        // Verificar si existen usuarios registrados
+        if (allUsers.length === 0) {
+            throw new Error('No hay usuarios registrados para notificar.');
+        }
+
+        return allUsers;
     },
-    async addRewardPoint(userId) {
+
+    async addRewardPoint(userId, rewardPoints) {
         try {
             const user = await db.user.findUnique({ where: { user_id: userId } });
 
             if (!user) {
                 throw new Error('User not found');
             }
-            const newTotalPoints = user.points + 1;
+            const newTotalPoints = user.points + rewardPoints;
             console.log(user.points);
             console.log(newTotalPoints);
-
-
 
             const updatedUser = await db.user.update({
                 where: { user_id: userId },

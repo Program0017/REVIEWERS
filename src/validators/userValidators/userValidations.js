@@ -15,6 +15,8 @@ const validateUniqueUsername = async (username) => {
     return existingUser !== null; 
 };
 
+
+
 module.exports = {
     validateUniqueEmail,
     validateUniqueUsername

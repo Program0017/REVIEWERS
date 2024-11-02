@@ -5,15 +5,19 @@ const updateReview = require('../../controllers/reviewControllers/UpdateControll
 const listOrSearchReviews = require('../../controllers/reviewControllers/ReadController');
 const hideReview = require('../../controllers/reviewControllers/DeactivateController');
 const voteOrWithdrawReview = require('../../controllers/reviewControllers/votes/voteOrWithdrawReview');
-const reportReviewController = require('../../controllers/reviewControllers/reports/ReportController');
+const reportReviewController = require('../../controllers/reviewControllers/Reports/ReportController');
+const validateReviewBusiness = require('../../controllers/reviewControllers/ValidateReviewByBusiness');
+
 const authMiddleware = require('../../middleware/authMiddleware');
 
 // Review Routes
-router.post('/reviews', authMiddleware, createReview.createReview);
+router.post('/', authMiddleware, createReview.createReview);
 router.put('/edit', authMiddleware, updateReview.editReview);
-router.get('/reviews', authMiddleware, listOrSearchReviews.listOrSearchReviews);
+router.get('/search', authMiddleware, listOrSearchReviews.listOrSearchReviews);
 router.put('/toggle-status/:reviewId', authMiddleware, hideReview.toggleReviewActiveStatus);
 router.post('/:reviewId/vote', authMiddleware, voteOrWithdrawReview.voteOrWithdrawReview);
 router.post('/:reviewId/report', authMiddleware, reportReviewController.reportReview);
+router.get('/:reviewId/validate/:businessId', authMiddleware, validateReviewBusiness.validateReviewBusiness);
+
 
 module.exports = router;

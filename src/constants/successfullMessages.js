@@ -13,6 +13,7 @@ const SUCCESSFULL_MESSAGES = {
     REVIEWS_RETRIEVED: "All reviews retrieved successfully.",
     REVIEW_UPDATED: "Review updated successfully.",
     REVIEWS_FOUND: "Reviews found.",
+    REVIEW_VALIDATED: "Review validated by a business.",
 
     VOTE_REGISTERED: "Vote registered successfully.",
     VOTE_REMOVED: "Vote withdrawn successfully.",
@@ -25,6 +26,12 @@ const SUCCESSFULL_MESSAGES = {
     BUSINESS_STATUS_TOGGLED: "Business status toggled successfully.",
     RETRIEVED_ALL_BUSINESSES: "All business retrieved successfully.",
     BUSINESS_FOUND: "Business found.",
+
+    REWARD_CREATED: "Reward created successfully and the notifications has been seended.",
+    REWARD_UPDATED: "Reward udated successfully.",
+    REWARD_STATUS_TOGGLED: "Reward status toggled successfully.",
+    RETRIEVED_ALL_REWARDS:  "All business rewards successfully.",
+
 };
 
 module.exports = SUCCESSFULL_MESSAGES;

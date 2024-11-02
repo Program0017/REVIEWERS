@@ -4,10 +4,6 @@ const { validatePassword, validateUserExists } = require('../../validators/authV
 const userService = require('../../services/userServices/userService');
 const UserOutputDTO = require('../../dto/user/userOutputDTO');
 
-
-
-
-
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
