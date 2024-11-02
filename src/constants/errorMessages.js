@@ -38,6 +38,7 @@ const ERROR_MESSAGES = {
     REWARD_UPDATE_FAILED: "An error occurred while updatin the reward.",
     REWARD_NOT_FOUND: "The specified reward could not be found.",
     REWARDS_NOT_FOUND: "No rewards were found.",
+    REWARD_CLAIM_FAILED: "Failed to claim the reward"
 };
 
 module.exports = ERROR_MESSAGES;

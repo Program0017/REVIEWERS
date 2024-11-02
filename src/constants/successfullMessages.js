@@ -31,7 +31,7 @@ const SUCCESSFULL_MESSAGES = {
     REWARD_UPDATED: "Reward udated successfully.",
     REWARD_STATUS_TOGGLED: "Reward status toggled successfully.",
     RETRIEVED_ALL_REWARDS:  "All business rewards successfully.",
-
+    REWARD_CLAIMED: "Reward claimed successfully",
 };
 
 module.exports = SUCCESSFULL_MESSAGES;

@@ -48,18 +48,18 @@ const rewardService = {
     async searchRewards(filters, page = 1, pageSize = 10) {
         const skip = (page - 1) * pageSize;
         const take = pageSize;
-    
+
         const { rewardId, type, isRedeemed, itsAvailable } = filters;
-    
+
         const conditions = [];
-    
+
         if (rewardId) conditions.push({ reward_id: parseInt(rewardId, 10) });
         if (type) conditions.push({ type: { contains: type } }); // Asumiendo que deseas hacer una búsqueda de texto
         if (isRedeemed !== undefined) conditions.push({ is_redeemed: isRedeemed === 'true' }); // Convertir a booleano
         if (itsAvailable !== undefined) conditions.push({ itsAvailable: itsAvailable === 'true' }); // Convertir a booleano
-    
+
         conditions.push({ itsAvailable: true });
-    
+
         return await db.reward.findMany({
             where: {
                 AND: conditions,
@@ -81,7 +81,7 @@ const rewardService = {
     },
     async expireRewards() {
         const now = new Date();
-        
+
         const expiredRewards = await db.reward.findMany({
             where: {
                 expiration_date: { lt: now },
@@ -103,8 +103,53 @@ const rewardService = {
         }
 
         return expiredRewards.length;
+    },
+
+    async claimReward(userId, rewardId) {
+        try {
+            const user = await db.user.findUnique({
+                where: { user_id: userId },
+                include: { Reward: true },
+            });
+
+            const reward = await db.reward.findUnique({
+                where: { reward_id: rewardId },
+            });
+
+            if (!reward || !reward.itsAvailable) {
+                throw new Error('Recompensa no disponible o ya reclamada.');
+            }
+
+            if (user.points < reward.points_needed) {
+                throw new Error('No tienes suficientes puntos para reclamar esta recompensa.');
+            }
+
+            const updatedPoints = user.points - reward.points_needed;
+            await db.user.update({
+                where: { user_id: userId },
+                data: { points: updatedPoints },
+            });
+
+            await db.reward.update({
+                where: { reward_id: rewardId },
+                data: {
+                    is_redeemed: true,
+                    redeemed_date: new Date(),
+                    users: {
+                        connect: { user_id: userId }
+                    }
+                }
+            });
+
+            return {
+                message: 'Recompensa reclamada exitosamente.',
+            };
+        } catch (error) {
+            return {
+                error: error.message,
+            };
+        }
     }
-    
-}
+};
 
 module.exports = rewardService;
