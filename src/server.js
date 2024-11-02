@@ -24,7 +24,7 @@ app.use('/api/business', businessRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/reward', rewardRoutes);
 
-// Configuración de cron job para caducar recompensas todos los días a la 1:36 AM
+// Configuración de cron job para caducar recompensas todos los días a la 12:00 AM
 cron.schedule('0 0 * * *', async () => {
     try {
         const expiredCount = await rewardService.expireRewards();
