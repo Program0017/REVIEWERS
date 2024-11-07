@@ -1,6 +1,6 @@
 const reviewService = require('../../services/reviewServices/reviewService');
 const messageService = require('../../services/userServices/messageService');
-const { removeRewardPoint } = require('../../services/userServices/userService');
+const { removeActionPoint } = require('../../services/userServices/userService');
 
 const toggleReviewActiveStatus = async(req,res) => {
     const reviewId = req.params.reviewId
@@ -11,14 +11,14 @@ const toggleReviewActiveStatus = async(req,res) => {
     try{
         const review = await reviewService.findReviewById(parseInt(reviewId));
     
-        const newStatus = !review.itsHided
+        const newStatus = !review.isHidden
         action = newStatus ? 'activated' : 'deactivated';
 
-        const updatedReview = await reviewService.updateReview(review.review_id, { itsHided: newStatus });
+        const updatedReview = await reviewService.updateReview(review.id, { isHidden: newStatus });
         
         // Solo remover puntos si la reseña es desactivada
         //if (!newStatus) {
-        //    await removeRewardPoint(review.user_id);
+        //    await removeActionPoint(review.user_id);
         //}
 
         res.status(200).json({

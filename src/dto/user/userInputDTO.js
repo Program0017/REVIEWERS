@@ -1,24 +1,23 @@
-
 class UserInputDTO {
-    constructor({ user_id, username, email, password, bio, profile_picture_url, tags }) {
-        this.user_id = user_id;
+    constructor({ id, username, email, passwordHash, bio, profilePictureUrl, referredById }) {
+        this.id = id;
         this.username = username;
         this.email = email;
-        this.password = password;
+        this.passwordHash = passwordHash;
         this.bio = bio;
-        this.profile_picture_url = profile_picture_url;
-        this.tags = tags;
+        this.profilePictureUrl = profilePictureUrl;
+        this.referredById = referredById; // Cambiado a camelCase para seguir la convención
     }
 
     static fromRequestBody(body) {
         return new UserInputDTO({
-            user_id: body.user_id,
+            id: body.id,
             username: body.username,
             email: body.email,
-            password: body.password,
+            passwordHash: body.passwordHash,
             bio: body.bio,
-            profile_picture_url: body.profile_picture_url,
-            tags: body.tags
+            profilePictureUrl: body.profilePictureUrl,
+            referredById: body.referredById // Mapeo del campo que llega en snake_case
         });
     }
 }

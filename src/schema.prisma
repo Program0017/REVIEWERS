@@ -6,111 +6,152 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
 model User {
-  user_id          Int      @id @default(autoincrement())
-  username         String   @unique
-  email            String   @unique
-  password_hash    String
-  profile_picture_url String
-  bio              String
-  registration_date DateTime @default(now())
-  updated_date     DateTime?
-  last_login       DateTime?
-  tags             String
-  itsActive        Boolean  @default(true)
-  itsReported      Boolean  @default(false)
-  points           Int      @default(0)
+  id                Int      @id @default(autoincrement())
+  username          String   @unique
+  email             String   @unique
+  passwordHash      String
+  profilePictureUrl String
+  bio               String
+  registrationDate  DateTime @default(now())
+  updatedDate       DateTime?
+  lastLogin         DateTime?
+  isActive          Boolean  @default(true)
+  isReported        Boolean  @default(false)
+  points            Int      @default(0)
 
-  reviews          Review[]        // Reseñas escritas por el usuario
-  reports          Report[]        // Reportes realizados por el usuario
-  Referral Referral[] @relation("Referrer")
-  Vote Vote[]
-
-  Reward Reward[] @relation("UserRewards")
+  // Relaciones
+  reviews           Review[]     
+  reports           Report[]     
+  votes             Vote[]       
+  rewards           Reward[]     @relation("UserRewards")
+  referredById      Int?         
+  referredBy        User?        @relation("UserReferrals", fields: [referredById], references: [id])
+  referrals         User[]       @relation("UserReferrals")
+  tags              UserTag[]
 }
 
 model Review {
-  review_id      Int      @id @default(autoincrement())
-  user_id        Int
-  user           User     @relation(fields: [user_id], references: [user_id])
-  business_id    Int
-  business       Business  @relation(fields: [business_id], references: [business_id])
-  rating         Int
-  title          String
-  content        String
-  image_url      String?  // La imagen no es obligatoria
-  tags           String
-  wasValidated   Boolean
-  creation_date  DateTime @default(now())
-  updated_date   DateTime @updatedAt
-  helpful_votes  Int      @default(0)
-  itsHided       Boolean  @default(false)
-  itsReported    Boolean  @default(false)
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  user            User      @relation(fields: [userId], references: [id])
+  businessId      Int
+  business        Business  @relation(fields: [businessId], references: [id])
+  rating          Int
+  title           String
+  content         String
+  imageUrl        String?  
+  tags            String
+  isValidated     Boolean
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime @updatedAt
+  helpfulVotes    Int      @default(0)
+  isHidden        Boolean  @default(false)
+  isReported      Boolean  @default(false)
 
-  reports        Report[]  // Reportes de la reseña
-  Vote Vote[]
+  reports         Report[]  
+  votes           Vote[]
 }
 
 model Business {
-  business_id     Int      @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   name            String   @unique
   location        String
-  category        String
-  average_rating  Float    @default(0.00)
-  total_reviews   Int      @default(0)
-  contact_info    String
-  creation_date   DateTime @default(now())
-  updated_date    DateTime @updatedAt
-  tags            String
-  itsActive       Boolean  @default(true)
-  itsReported      Boolean  @default(false)
+  categoryId      Int?
+  averageRating   Float    @default(0.00)
+  totalReviews    Int      @default(0)
+  contactInfo     String
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime @updatedAt
+  tags            BusinessTag[]
+  isActive        Boolean  @default(true)
+  isReported      Boolean  @default(false)
 
-  reviews         Review[] // Relación con Review
+  reviews         Review[]
+  category        BusinessCategory? @relation(fields: [categoryId], references: [id])
+
 }
 
 model Vote {
-  vote_id        Int      @id @default(autoincrement())
-  review_id      Int
-  user_id        Int
-  isHelpful      Boolean   // Indica si el voto es útil
-  creation_date  DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  reviewId        Int
+  userId          Int
+  isHelpful       Boolean   
+  creationDate    DateTime @default(now())
 
-  review         Review    @relation(fields: [review_id], references: [review_id])
-  user           User      @relation(fields: [user_id], references: [user_id])
+  review          Review    @relation(fields: [reviewId], references: [id])
+  user            User      @relation(fields: [userId], references: [id])
 }
 
 model Reward {
-  reward_id          Int      @id @default(autoincrement())
-  points_needed      Int
-  reward_description String
-  is_redeemed        Boolean  @default(false)
-  creation_date      DateTime @default(now())
-  redeemed_date      DateTime?
-  expiration_date    DateTime // Fecha de expiración de la recompensa
-  type               String   // Tipo de recompensa (p. ej., comida, viaje)
-  itsAvailable Boolean @default(true)
+  id              Int      @id @default(autoincrement())
+  pointsNeeded    Int
+  description     String
+  isRedeemed      Boolean  @default(false)
+  creationDate    DateTime @default(now())
+  redeemedDate    DateTime?
+  expirationDate  DateTime 
+  categoryId      Int?   
+  isAvailable     Boolean  @default(true)
 
-  users User[] @relation("UserRewards")
+  users           User[]   @relation("UserRewards")
+  category        RewardCategory? @relation(fields: [categoryId], references: [id])
 
 }
 
 model Report {
-  id          Int      @id @default(autoincrement())
-  userId      Int
-  reviewId    Int
-  reason      String
-  isActive    Boolean  @default(false)
-  reportDate  DateTime @default(now())
-  review      Review   @relation(fields: [reviewId], references: [review_id])
-  user        User     @relation(fields: [userId], references: [user_id])
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  reviewId        Int
+  reason          String
+  isActive        Boolean  @default(false)
+  reportDate      DateTime @default(now())
+  review          Review   @relation(fields: [reviewId], references: [id])
+  user            User     @relation(fields: [userId], references: [id])
 }
 
-model Referral {
-  id          Int      @id @default(autoincrement())
-  referrer_id Int      // ID del usuario que hace la invitación
-  referred_id Int      // ID del amigo invitado
-  creation_date DateTime @default(now())
+model UserTag {
+  id              Int      @id @default(autoincrement())
+  userId          Int?
+  tag             String
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime?
 
-  referrer    User     @relation("Referrer", fields: [referrer_id], references: [user_id])
+  user            User?    @relation(fields: [userId], references: [id])
+}
+
+model BusinessTag {
+  id              Int      @id @default(autoincrement())
+  businessId      Int?
+  tag             String
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime?
+
+  businesses      Business[]
+}
+
+model BusinessCategory {
+  id              Int       @id @default(autoincrement())
+  category        String   
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime?
+
+  businesses      Business[]
+}
+
+model RewardCategory {
+  id              Int       @id @default(autoincrement())
+  category        String   
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime?
+
+  rewards         Reward[]
+}
+
+model ActionPoint {
+  id              Int      @id @default(autoincrement())
+  action          String   @unique// Ejemplo: 'Referir nuevos usuarios', 'Crear reseñas', etc.
+  points          Int      // Puntos asignados por la acción
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime?
 }

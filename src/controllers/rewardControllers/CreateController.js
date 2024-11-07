@@ -10,11 +10,11 @@ const createReward = async(req, res) => {
 
     try {
         const reward = await rewardService.createReward({
-            points_needed: rewardInputDTO.points_needed,
-            reward_description: rewardInputDTO.reward_description,
-            expiration_date: new Date(rewardInputDTO.expiration_date),
-            type: rewardInputDTO.type,
-            itsAvailable: true
+            pointsNeeded: rewardInputDTO.pointsNeeded,
+            description: rewardInputDTO.description,
+            expirationDate: new Date(rewardInputDTO.expirationDate),
+            categoryId: rewardInputDTO.categoryId,
+            isAvailable: true
 
         });
 
@@ -23,7 +23,7 @@ const createReward = async(req, res) => {
         const rewardOutputDTO = RewardOutputDTO.format(reward);
 
 
-        await emailService.sendRewardNotificationToAllUsers(allUsers, rewardInputDTO.reward_description);
+        await emailService.sendRewardNotificationToAllUsers(allUsers, rewardInputDTO.description);
 
         return res.status(201).json({
             message: messageService.getSuccessMessage('REWARD_CREATED'),

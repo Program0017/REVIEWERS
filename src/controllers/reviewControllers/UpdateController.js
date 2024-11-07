@@ -14,9 +14,9 @@ const editReview = async (req, res) => {
             ...(reviewInput.rating && { rating: reviewInput.rating }),
             ...(reviewInput.title && { title: reviewInput.title }),
             ...(reviewInput.content && { content: reviewInput.content }),
-            ...(reviewInput.image_url && { image_url: reviewInput.image_url }),
+            ...(reviewInput.imageUrl && { imageUrl: reviewInput.imageUrl }),
             ...(reviewInput.tags && { tags: reviewInput.tags }),
-            updated_date: new Date(),
+            updatedDate: new Date(),
         };
 
         const updatedReview = await reviewService.updateReview(reviewId, updatedData);

@@ -1,45 +1,71 @@
-const bcrypt = require('bcrypt');
 const { hashPassword } = require('../../utils/passwordUtils');
 const userService = require('../../services/userServices/userService');
 const userValidationMiddleware = require('../../middleware/userValidationMiddleware');
 const UserInputDTO = require('../../dto/user/userInputDTO');
 const UserOutputDTO = require('../../dto/user/userOutputDTO');
 const messageService = require('../../services/userServices/messageService');
+const actionPointService = require('../../services/AuxiliarServices/ActionPointServices/ActionPointService');
+
 
 
 const registerUser = async (req, res) => {
 
-        try {
-            const userInput = UserInputDTO.fromRequestBody(req.body);
+    try {
+        const userInput = UserInputDTO.fromRequestBody(req.body);
 
-            const password_hash = await hashPassword(userInput.password)
-            
-            const user = await userService.createUser({
-                username: userInput.username,
-                email: userInput.email,
-                password_hash,
-                bio: userInput.bio,
-                profile_picture_url: userInput.profile_picture_url,
-                tags: userInput.tags,
-                updated_date: new Date(),
-                last_login: new Date(),
-                itsActive: true
-            });
+        const passwordHash = await hashPassword(userInput.passwordHash)
 
-            await messageService.sendConfirmationEmail(user);
-            
-            const userResponse = UserOutputDTO.format(user);
+        let referredById = null;
+        if (userInput.referredById) {
+            const referrer = await userService.findUserById(userInput.referredById);
+            if (referrer) {
+                referredById = referrer.id; // Asignar el ID del usuario que refiere
+            }
+        }
 
-            res.status(201).json(userResponse);
-        }catch(error) {
-            console.error(messageService.getErrorMessage('REGISTRATION_FAILED'), error);
-            res.status(500).json({message: messageService.getErrorMessage('INTERNAL_SERVER_ERROR') });
-        }   
-    };
+        const user = await userService.createUser({
+            username: userInput.username,
+            email: userInput.email,
+            passwordHash,
+            bio: userInput.bio,
+            profilePictureUrl: userInput.profilePictureUrl,
+            tags: userInput.tags,
+            updatedDate: new Date(),
+            lastLogin: new Date(),
+            isActive: true,
+            referredById: userInput.referredById || null,
+
+        });
+
+        // Verificar si hay un referrer y agregar recompensa
+        if (userInput.referredById) {
+            await userService.addReferral(userInput.referredById, user.id);
+
+            const referralAction = await actionPointService.findByAction('REGISTER_WITH_A_REFERRAL_CODE');
+
+            const newUserAction = await actionPointService.findByAction('REFER_NEW_USER');
+
+            if (referralAction && newUserAction) {
+                await userService.addActionPoint(referredById, referralAction.points);
+                // Asigna 10 puntos al nuevo usuario
+                await userService.addActionPoint(user.id, newUserAction.points);
+                // Asigna 20 puntos al usuario original que refiere
+            }
+        } 
+        await messageService.sendConfirmationEmail(user);
+
+        const userResponse = UserOutputDTO.format(user);
+
+        res.status(201).json(userResponse);
+    } catch (error) {
+        console.error(messageService.getErrorMessage('REGISTRATION_FAILED'), error);
+        res.status(500).json({ message: messageService.getErrorMessage('INTERNAL_SERVER_ERROR') });
+    }
+};
 
 module.exports = {
     registerUser,
-    userValidationMiddleware 
+    userValidationMiddleware
 }
 
 

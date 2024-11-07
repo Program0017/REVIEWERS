@@ -38,7 +38,25 @@ const ERROR_MESSAGES = {
     REWARD_UPDATE_FAILED: "An error occurred while updatin the reward.",
     REWARD_NOT_FOUND: "The specified reward could not be found.",
     REWARDS_NOT_FOUND: "No rewards were found.",
-    REWARD_CLAIM_FAILED: "Failed to claim the reward"
+    REWARD_CLAIM_FAILED: "Failed to claim the reward",
+
+    TAG_FAILED: "Failed to create the tag",
+    NO_TAGS_FOUND: "No tags were found.",
+    TAGS_GET_FAILED: "Failed to get the tags",
+    NO_TAGS_FOUND_FOR_USER: "No tags were found for this user",
+    NO_TAGS_FOUND_FOR_BUSINESS: "No tags were found for this business",
+    TAG_NOT_UPDATED: "Failed to updated the tag",
+
+    CATEGORY_FAILED:"Failed to create the type",
+    NO_TYPES_FOUND: "No types of this business were found",
+    TYPES_GET_FAILED:  "Failed to get the business types",
+    TYPE_NOT_UPDATED: "failed to update this Type of business successfully.",
+
+    ACTION_POINT_CREATION_FAILED: "Failed to create the reward point",
+    BUSINESS_NOT_UPDATED:  "Failed to updated the reward point",
+    ACTION_POINTS_GET_FAILED: "Failed to get the reward points",
+    ACTION_POINT_NOT_FOUND: "No reward point were found",
+    
 };
 
 module.exports = ERROR_MESSAGES;

@@ -2,6 +2,7 @@ const businessService = require('../../../services/businessServices/businessServ
 const messageService = require('../../../services/userServices/messageService');
 const emailService = require('../../../services/userServices/emailService');
 const reportService = require('../../../services/reviewServices/reportService');
+const reviewService = require('../../../services/reviewServices/reviewService');
 
 const reportReview = async (req, res) => {
     const userId = req.user.userId; 
@@ -14,7 +15,7 @@ const reportReview = async (req, res) => {
 
     try {
         const review = await reviewService.findReviewById(reviewId);
-        await reviewService.updateReview(reviewId, { itsReported: true });
+        await reviewService.updateReview(reviewId, { isReported: true });
 
         const newReport = await reportService.createReport({ userId, reviewId, reason });
         await emailService.sendConfirmationReportMail(userId, reviewId, reason);
@@ -45,7 +46,7 @@ const unreportReview = async (req, res) => {
         }
 
         await reportService.updateReport(report.id, { isActive: false });
-        await reviewService.updateReview(review.review_id, { itsReported: false });
+        await reviewService.updateReview(review.review_id, { isReported: false });
 
         return res.status(200).json({ 
             message: messageService.getSuccessMessage('REVIEW_UNREPORTED'), 

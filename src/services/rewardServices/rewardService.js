@@ -2,8 +2,17 @@ const { PrismaClient } = require('@prisma/client');
 const db = new PrismaClient();
 
 const rewardService = {
-    async createReward(rewardData) {
-        return await db.reward.create({ data: rewardData });
+    async createReward(data) {
+        const { categoryId, ...restData } = data;
+
+        return await db.reward.create({ 
+            data: {
+                ...restData,
+                category:{
+                    connect: { id: categoryId }
+                }
+            } 
+        });
     },
 
     async updateReward(rewardId, updatedData) {
@@ -12,33 +21,31 @@ const rewardService = {
         }
 
         return await db.reward.update({
-            where: { reward_id: rewardId },
+            where: { id: rewardId }, // Cambiado a "id"
             data: updatedData,
         });
     },
 
-    // Buscar usuario por ID
     async findRewardById(rewardId) {
-        return await db.reward.findUnique({ where: { reward_id: rewardId } });
+        return await db.reward.findUnique({ where: { id: rewardId } }); // Cambiado a "id"
     },
+
     async getAllRewards(page = 1, pageSize = 10) {
         const skip = (page - 1) * pageSize;
         const take = pageSize;
 
         return await db.reward.findMany({
-            where: {
-                itsAvailable: true
-            },
+            where: { isAvailable: true }, // Cambiado a "isAvailable"
             select: {
-                reward_id: true,
-                points_needed: true,
-                reward_description: true,
-                is_redeemed: true,
-                creation_date: true,
-                redeemed_date: true,
-                expiration_date: true,
-                type: true,
-                itsAvailable: true,
+                id: true, // Cambiado a "id"
+                pointsNeeded: true, // Cambiado a "pointsNeeded"
+                description: true, // Cambiado a "description"
+                isRedeemed: true, // Cambiado a "isRedeemed"
+                creationDate: true,
+                redeemedDate: true,
+                expirationDate: true,
+                category: true,
+                isAvailable: true, // Cambiado a "isAvailable"
             },
             skip,
             take,
@@ -49,55 +56,56 @@ const rewardService = {
         const skip = (page - 1) * pageSize;
         const take = pageSize;
 
-        const { rewardId, type, isRedeemed, itsAvailable } = filters;
+        const { rewardId, category, isRedeemed, isAvailable } = filters;
 
         const conditions = [];
 
-        if (rewardId) conditions.push({ reward_id: parseInt(rewardId, 10) });
-        if (type) conditions.push({ type: { contains: type } }); // Asumiendo que deseas hacer una búsqueda de texto
-        if (isRedeemed !== undefined) conditions.push({ is_redeemed: isRedeemed === 'true' }); // Convertir a booleano
-        if (itsAvailable !== undefined) conditions.push({ itsAvailable: itsAvailable === 'true' }); // Convertir a booleano
+        if (rewardId) conditions.push({ id: parseInt(rewardId, 10) }); // Cambiado a "id"
+        if (category) conditions.push({ category: { contains: category } }); 
+        if (isRedeemed !== undefined) conditions.push({ isRedeemed: isRedeemed === 'true' }); // Cambiado a "isRedeemed"
+        if (isAvailable !== undefined) conditions.push({ isAvailable: isAvailable === 'true' }); // Cambiado a "isAvailable"
 
-        conditions.push({ itsAvailable: true });
+        conditions.push({ isAvailable: true });
 
         return await db.reward.findMany({
             where: {
                 AND: conditions,
             },
             select: {
-                reward_id: true,
-                points_needed: true,
-                reward_description: true,
-                is_redeemed: true,
-                creation_date: true,
-                redeemed_date: true,
-                expiration_date: true,
-                type: true,
-                itsAvailable: true,
+                id: true, // Cambiado a "id"
+                pointsNeeded: true, // Cambiado a "pointsNeeded"
+                description: true, // Cambiado a "description"
+                isRedeemed: true, // Cambiado a "isRedeemed"
+                creationDate: true,
+                redeemedDate: true,
+                expirationDate: true,
+                category: true,
+                isAvailable: true, // Cambiado a "isAvailable"
             },
             skip,
             take,
         });
     },
+
     async expireRewards() {
         const now = new Date();
 
         const expiredRewards = await db.reward.findMany({
             where: {
-                expiration_date: { lt: now },
-                itsAvailable: true,
+                expirationDate: { lt: now }, // Cambiado a "expirationDate"
+                isAvailable: true, // Cambiado a "isAvailable"
             }
         });
 
         if (expiredRewards.length > 0) {
             await db.reward.updateMany({
                 where: {
-                    reward_id: {
-                        in: expiredRewards.map(reward => reward.reward_id)
+                    id: {
+                        in: expiredRewards.map(reward => reward.id), // Cambiado a "id"
                     }
                 },
                 data: {
-                    itsAvailable: false
+                    isAvailable: false // Cambiado a "isAvailable"
                 }
             });
         }
@@ -108,35 +116,35 @@ const rewardService = {
     async claimReward(userId, rewardId) {
         try {
             const user = await db.user.findUnique({
-                where: { user_id: userId },
-                include: { Reward: true },
+                where: { id: userId }, // Cambiado a "id"
+                include: { rewards: true }, // Cambiado a "rewards"
             });
 
             const reward = await db.reward.findUnique({
-                where: { reward_id: rewardId },
+                where: { id: rewardId }, // Cambiado a "id"
             });
 
-            if (!reward || !reward.itsAvailable) {
+            if (!reward || !reward.isAvailable) { // Cambiado a "isAvailable"
                 throw new Error('Recompensa no disponible o ya reclamada.');
             }
 
-            if (user.points < reward.points_needed) {
+            if (user.points < reward.pointsNeeded) { // Cambiado a "pointsNeeded"
                 throw new Error('No tienes suficientes puntos para reclamar esta recompensa.');
             }
 
-            const updatedPoints = user.points - reward.points_needed;
+            const updatedPoints = user.points - reward.pointsNeeded; // Cambiado a "pointsNeeded"
             await db.user.update({
-                where: { user_id: userId },
+                where: { id: userId }, // Cambiado a "id"
                 data: { points: updatedPoints },
             });
 
             await db.reward.update({
-                where: { reward_id: rewardId },
+                where: { id: rewardId }, // Cambiado a "id"
                 data: {
-                    is_redeemed: true,
-                    redeemed_date: new Date(),
+                    isRedeemed: true, // Cambiado a "isRedeemed"
+                    redeemedDate: new Date(),
                     users: {
-                        connect: { user_id: userId }
+                        connect: { id: userId } // Cambiado a "id"
                     }
                 }
             });

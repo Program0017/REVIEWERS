@@ -1,6 +1,6 @@
 const reviewService = require('../../services/reviewServices/reviewService');
 const messageService = require('../../services/userServices/messageService');
-const { addRewardPoint } = require('../../services/userServices/userService');
+const { addActionPoint } = require('../../services/userServices/userService');
 
 
 const validateReviewBusiness = async (req, res) => {
@@ -9,14 +9,18 @@ const validateReviewBusiness = async (req, res) => {
     try{
         const review = await reviewService.validateReviewBusiness(parseInt(reviewId), parseInt(businessId));
 
-        await addRewardPoint(review.user_id, 1)
+        const validatedReview = await actionPointService.findByAction('VALIDATE_REVIEW');
 
-        const updatedReview = await reviewService.updateReview(review.review_id, { wasValidated: true });
+        await addActionPoint(review.id, validatedReview)
+
+        const updatedReview = await reviewService.updateReview(review.review_id, { isValidated: true });
+
+        const reviewOutput = ReviewOutputDTO.format(updatedReview);
 
 
         res.status(200).json({
             message: messageService.getSuccessMessage('REVIEW_VALIDATED'),
-            review: review,
+            review: reviewOutput,
         });
     } catch (error) {
         console.error(messageService.getErrorMessage('REVIEW_VALIDATION_FAILED'), error);

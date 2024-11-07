@@ -1,7 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const db = new PrismaClient();
 
-
 const reportService = {
     async createReport({ userId, reviewId, reason }) {
         try {
@@ -12,6 +11,7 @@ const reportService = {
                     reviewId: reviewId,    
                     reason: reason,        
                     reportDate: new Date(), 
+                    isActive: true, // Puedes establecerlo en true si el reporte debe estar activo al crearlo
                 },
             });
         } catch (error) {
@@ -21,8 +21,11 @@ const reportService = {
     },
     async findReportById(reportId) {
         return await db.report.findUnique({
-            where:
-                { id: reportId }
+            where: { id: reportId },
+            include: {
+                user: true, // Incluye datos del usuario que hizo el reporte
+                review: true // Incluye datos de la reseña reportada
+            }
         });
     },
     async updateReport(reportId, updatedData) {
@@ -32,7 +35,10 @@ const reportService = {
 
         return await db.report.update({
             where: { id: reportId },
-            data: updatedData,
+            data: {
+                ...updatedData, // Asegúrate de que `updatedData` contenga los campos válidos que deseas actualizar
+                // Puedes agregar lógica aquí si necesitas ajustar algunos valores antes de guardar
+            },
         });
     },
 };

@@ -1,13 +1,13 @@
 class RewardOutputDTO {
     constructor(reward) {
-        this.reward_id = reward.reward_id;
-        this.points_needed = reward.points_needed;
-        this.reward_description = reward.reward_description;
-        this.is_redeemed = reward.is_redeemed;
-        this.creation_date = reward.creation_date;
+        this.id = reward.id;
+        this.pointsNeeded = reward.pointsNeeded;
+        this.description = reward.description;
+        this.isRedeemed = reward.isRedeemed;
+        this.creationDate = reward.creationDate;
         this.redeemed_date = reward.redeemed_date;
-        this.expiration_date = reward.expiration_date;
-        this.type = reward.type;
+        this.redeemedDate = reward.redeemedDate;
+        this.category = reward.category;
     }
 
     // Método para formatear uno o más objetos reward

@@ -1,5 +1,6 @@
 const userService = require('../../services/userServices/userService');
 const messageService = require('../../services/userServices/messageService');
+const UserOutputDTO = require('../../dto/user/userOutputDTO');
 
 const listOrSearchUsers = async (req, res) => {
     const { query } = req.query; // Get search parameter from query if it exists
@@ -16,20 +17,23 @@ const listOrSearchUsers = async (req, res) => {
             if (users.length === 0) {
                 return res.status(404).json({ message: messageService.getErrorMessage('USERS_NOT_FOUND') });
             }
+            const userResponse = UserOutputDTO.format(users);
 
             return res.status(200).json({
                 message: messageService.getSuccessMessage('USERS_LISTED'), // Use messageService for success message
-                users,
+                userResponse,
                 currentPage: page,
                 totalResults: users.length,
             });
         } 
         
         users = await userService.getAllUsers();
+        
+        const userResponses = UserOutputDTO.format(users);
 
         return res.status(200).json({
             message: messageService.getSuccessMessage('RETRIEVED_ALL_USERS'), // Use messageService for success message
-            users,
+            userResponses,
         });
 
     } catch (error) {

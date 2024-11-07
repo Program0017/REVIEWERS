@@ -1,10 +1,17 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require('@prisma/client'); 
 const db = new PrismaClient();
 
 const businessService = {
     async createBusiness(data) {
+        const { categoryId, ...restData } = data; 
+
         return await db.business.create({
-            data
+            data: {
+                ...restData,
+                category: {
+                    connect: { id: categoryId } // Conectamos el negocio a la categoría usando el ID
+                }
+            }
         });
     },
 
@@ -14,15 +21,14 @@ const businessService = {
         }
 
         return await db.business.update({
-            where: { business_id: businessId },
+            where: { id: businessId }, // Actualizado para reflejar el nuevo esquema
             data: updatedData,
         });
     },
 
     async findBusinessById(businessId) {
         return await db.business.findUnique({
-            where:
-                { business_id: businessId }
+            where: { id: businessId } // Actualizado para reflejar el nuevo esquema
         });
     },
 
@@ -32,65 +38,81 @@ const businessService = {
 
         return await db.business.findMany({
             where: {
-                itsActive: true
+                isActive: true // Actualizado para reflejar el nuevo esquema
             },
             select: {
-                business_id: true,
+                id: true, // Actualizado para reflejar el nuevo esquema
                 name: true,
                 location: true,
                 category: true,
-                average_rating: true,
-                total_reviews: true,
-                created_date: true,
-                updated_date: true,
+                averageRating: true, // Actualizado para reflejar el nuevo esquema
+                totalReviews: true, // Actualizado para reflejar el nuevo esquema
+                creationDate: true, // Actualizado para reflejar el nuevo esquema
+                updatedDate: true, // Actualizado para reflejar el nuevo esquema
                 tags: true,
-                contact_info: true,
-                itsActive: true,
-                itsReported: true,
+                contactInfo: true, // Actualizado para reflejar el nuevo esquema
+                isActive: true,
+                isReported: true, // Actualizado para reflejar el nuevo esquema
             },
             skip,
             take,
         });
     },
 
-    async searchBusinesses (filters, page = 1, pageSize = 10){
+    async searchBusinesses(filters, page = 1, pageSize = 10) {
         const skip = (page - 1) * pageSize;
         const take = pageSize;
-    
+
         const { businessId, name, location, category, averageRating, tags } = filters;
-    
+
         const conditions = [];
-    
-        if (businessId) conditions.push({ business_id: parseInt(businessId, 10) });
+
+        if (businessId) conditions.push({ id: parseInt(businessId, 10) }); // Actualizado para reflejar el nuevo esquema
         if (name) conditions.push({ name: { contains: name } });
         if (location) conditions.push({ location: { contains: location } });
         if (category) conditions.push({ category: { contains: category } });
-        if (averageRating) conditions.push({ average_rating: parseFloat(averageRating) });
-        if (tags) conditions.push({ tags: { contains: tags } });
-    
-        conditions.push({ itsActive: true });
-    
+        if (averageRating) conditions.push({ averageRating: parseFloat(averageRating) }); // Actualizado para reflejar el nuevo esquema
+        if (tags) conditions.push({ tags: { some: { tag: { contains: tags } } }}); // Ajustado para el modelo BusinessTag
+
+        conditions.push({ isActive: true }); // Actualizado para reflejar el nuevo esquema
+
         return await db.business.findMany({
             where: {
                 AND: conditions,
             },
             select: {
-                business_id: true,
+                id: true, // Actualizado para reflejar el nuevo esquema
                 name: true,
                 location: true,
                 category: true,
-                average_rating: true,
-                total_reviews: true,
-                contact_info: true,
+                averageRating: true, // Actualizado para reflejar el nuevo esquema
+                totalReviews: true, // Actualizado para reflejar el nuevo esquema
+                contactInfo: true, // Actualizado para reflejar el nuevo esquema
                 tags: true,
-                creation_date: true,
-                updated_date: true,
-                itsActive: true,
+                creationDate: true, // Actualizado para reflejar el nuevo esquema
+                updatedDate: true, // Actualizado para reflejar el nuevo esquema
+                isActive: true,
             },
             skip,
             take,
         });
-    }
-   
-}
+    },
+
+    async assignTagToBusiness(businessId, tagId) {
+        // Asignar el tag al usuario
+        const updatedBusiness = await db.business.update({
+          where: { id: businessId },
+          data: {
+            tags: {
+              connect: { id: tagId }, // Conectar el tag con el usuario
+            },
+          },
+          include: {
+            tags: true, // Incluir los tags para verificar la actualización
+          },
+        });
+        return updatedBusiness;
+    },
+};
+
 module.exports = businessService;

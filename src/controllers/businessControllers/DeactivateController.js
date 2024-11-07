@@ -10,10 +10,10 @@ const toggleBusinessActiveStatus = async(req,res) => {
     try{
         const business = await businessService.findBusinessById(parseInt(businessId));
     
-        const newStatus = !business.itsActive
+        const newStatus = !business.isActive
         action = newStatus ? 'activated' : 'deactivated';
 
-        const updatedBusiness = await businessService.updateBusiness(business.business_id, { itsActive: newStatus });
+        const updatedBusiness = await businessService.updateBusiness(business.id, { isActive: newStatus });
 
         res.status(200).json({
             message: messageService.getSuccessMessage('BUSINESS_STATUS_TOGGLED'),

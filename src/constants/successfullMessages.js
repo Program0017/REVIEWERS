@@ -28,10 +28,27 @@ const SUCCESSFULL_MESSAGES = {
     BUSINESS_FOUND: "Business found.",
 
     REWARD_CREATED: "Reward created successfully and the notifications has been seended.",
-    REWARD_UPDATED: "Reward udated successfully.",
+    REWARD_UPDATED: "Reward updated successfully.",
     REWARD_STATUS_TOGGLED: "Reward status toggled successfully.",
     RETRIEVED_ALL_REWARDS:  "All business rewards successfully.",
     REWARD_CLAIMED: "Reward claimed successfully",
+
+    TAG_CREATED: "Tag created successfully.",
+    TAGS_RETRIEVED_SUCCESSFULLY:  "All tags retrieved successfully.",
+    USER_TAGS_RETRIEVED_SUCCESSFULLY: "All tags of this user retrieved successfully.",
+    BUSINESS_TAGS_RETRIEVED_SUCCESSFULLY: "All tags of this business retrieved successfully.",
+    TAG: "Tag udated successfully.",
+
+    CATEGORY_CREATED: "Type created succesfully",
+    TYPES_RETRIEVED_SUCCESSFULLY: "All the types of business retrieved successfully.",
+    TYPE_UPDATED: "Type of business updated successfully.",
+    
+
+    ACTION_POINT_CREATED: "reward point created successfully.",
+    ACTION_POINT_UPDATED:  "Reward point updated successfully.",
+    ACTION_POINTS_RETRIEVED_SUCCESSFULLY: "All the reward points retrieved successfully.",
+    ACTION_POINT_FOUND: "Reward point found.",
+    ACTION_POINTS_FOUND: "Reward points found.",
 };
 
 module.exports = SUCCESSFULL_MESSAGES;

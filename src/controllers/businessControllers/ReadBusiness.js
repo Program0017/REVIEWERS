@@ -15,14 +15,14 @@ const listOrSearchBusinesses  = async(req, res) => {
             business = await businessService.searchBusinesses({
                 category, 
                 tags, 
-                itsActive: true
+                isActive: true
             }, page, pageSize);
         }
         if (business.length === 0) {
             return res.status(404).json({ message: messageService.getErrorMessage('BUSINESSES_NOT_FOUND') });
         }
 
-        const sortedBusinesses = business.sort((a, b) => b.average_rating - a.average_rating);
+        const sortedBusinesses = business.sort((a, b) => b.averageRating - a.averageRating);
 
         const formattedBusinesses = sortedBusinesses.map(business => businessOutputDTO.format(business));
 

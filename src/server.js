@@ -10,6 +10,8 @@ const reviewRoutes = require('./routes/reviewRoutes/reviewRoutes');
 const businessRoutes = require('./routes/businessRoutes/businessRoutes');
 const authRoutes = require('./routes/authRoutes/authRoutes');
 const rewardRoutes = require('./routes/rewardRoutes/rewardRouter');
+const auxiliarRoutes  = require('./routes/AuxliaryRoutes/AuxiliarRoutesRouter');
+
 
 // Crear instancia de la aplicación Express
 const app = express();
@@ -23,6 +25,8 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/business', businessRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/reward', rewardRoutes);
+app.use('/api/auxiliars', auxiliarRoutes);
+
 
 // Configuración de cron job para caducar recompensas todos los días a la 12:00 AM
 cron.schedule('0 0 * * *', async () => {

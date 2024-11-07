@@ -1,25 +1,25 @@
 // dto/reviewInputDTO.js
 
 class ReviewInputDTO {
-    constructor({ user_id, business_id, rating, title, content, image_url, tags,  }) {
-        this.user_id = user_id;
-        this.business_id = business_id;
+    constructor({ userId, businessId, rating, title, content, imageUrl, tags,  }) {
+        this.userId = userId;
+        this.businessId = businessId;
         this.rating = rating;
         this.title = title;
         this.content = content;
-        this.image_url = image_url;
+        this.imageUrl = imageUrl;
         this.tags = tags;
     }
 
     // Método estático para crear un DTO de entrada a partir del cuerpo de la solicitud
     static fromRequestBody(body) {
         return new ReviewInputDTO({
-            user_id: body.user_id,
-            business_id: body.business_id,
+            userId: body.userId,
+            businessId: body.businessId,
             rating: body.rating,
             title: body.title,
             content: body.content,
-            image_url: body.image_url,
+            imageUrl: body.imageUrl,
             tags: body.tags
         });
     }

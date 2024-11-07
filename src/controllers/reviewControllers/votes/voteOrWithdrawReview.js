@@ -11,7 +11,7 @@ const voteOrWithdrawReview = async (req, res) => {
         const existingVote = await voteService.findVoteByUserAndReview(userId, reviewId);
         
         if (existingVote) {
-            await voteService.deleteVote(existingVote.vote_id);
+            await voteService.deleteVote(existingVote.id);
             await reviewService.updateHelpfulVotes(reviewId, existingVote.isHelpful, true);
 
             return res.status(200).json({

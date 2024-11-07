@@ -12,10 +12,10 @@ const updateReward = async(req, res) => {
         const rewardInput = RewardUpdateDTO.fromRequestBody(req.body); 
 
         const updatedData = {
-            ...(rewardInput.points_needed && { points_needed: rewardInput.points_needed }),
-            ...(rewardInput.reward_description && { reward_description: rewardInput.reward_description }),
-            ...(rewardInput.expiration_date && { expiration_date: rewardInput.expiration_date }),
-            ...(rewardInput.type && { type: rewardInput.type }),
+            ...(rewardInput.pointsNeeded && { pointsNeeded: rewardInput.pointsNeeded }),
+            ...(rewardInput.description && { description: rewardInput.description }),
+            ...(rewardInput.expirationDate && { expirationDate: rewardInput.expirationDate }),
+            ...(rewardInput.category && { category: rewardInput.category }),
         };
 
         const updatedReward = await rewardService.updateReward(rewardId, updatedData);
