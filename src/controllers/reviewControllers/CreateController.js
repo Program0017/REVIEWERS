@@ -1,35 +1,41 @@
 const reviewService = require('../../services/reviewServices/reviewService')
 const { updateBusinessReviewStats } = require('../../services/businessServices/updateBusinessReviewStatsService');
-const { addRewardPoint } = require('../../services/userServices/userService');
+const { addActionPoint } = require('../../services/userServices/userService');
 
 const messageService = require('../../services/userServices/messageService');
 const ReviewInputDTO = require('../../dto/review/reviewInputDTO'); // DTO de entrada
 const ReviewOutputDTO = require('../../dto/review/reviewOutputDTO'); // DTO de salida
-const authMiddleware = require('../../middleware/authMiddleware')
-
+const authMiddleware = require('../../middleware/authMiddleware');
+const actionPointService = require('../../services/AuxiliarServices/ActionPointServices/ActionPointService');
 
 const createReview = async(req, res) =>{
     const reviewInput = ReviewInputDTO.fromRequestBody(req.body);
 
     try{
         const review = await reviewService.createReview({
-            user_id: reviewInput.user_id,
-            business_id: reviewInput.business_id,
+            userId: reviewInput.userId,
+            businessId: reviewInput.businessId,
             rating: reviewInput.rating,
             title: reviewInput.title,
             content: reviewInput.content,
-            image_url: reviewInput.image_url || null,
+            imageUrl: reviewInput.imageUrl || null,
             tags: reviewInput.tags,
-            creation_date: new Date(),
-            updated_date: new Date(),
-            wasValidated: false
+            creationDate: new Date(),
+            updatedDate: new Date(),
+            isValidated: false
         });
 
-        await updateBusinessReviewStats(review.business_id, review.rating);
+        await updateBusinessReviewStats(review.businessId, review.rating);
 
-        const rewardPoints = review.image_url ? 2 : 1;
-        await addRewardPoint(review.user_id, rewardPoints);
+        const createReviewWithImage = await actionPointService.findByAction('CREATE_REVIEW_WITH_IMAGE');
+        const createReviewWithoutImage = await actionPointService.findByAction('CREATE_REVIEW_WITHOUT_IMAGE');
 
+        if (createReviewWithImage && createReviewWithoutImage) {
+
+            const ActionPoints = review.imageUrl ? createReviewWithImage : createReviewWithoutImage;
+            await addActionPoint(review.userId, ActionPoints);
+
+        }
 
         const reviewResponse = ReviewOutputDTO.format(review);
 

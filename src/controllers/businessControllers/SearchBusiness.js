@@ -13,8 +13,8 @@ const searchBusiness = async (req, res) => {
         }
 
         businesses = await businessService.searchBusinesses({
+            id: businessId,
             name,
-            business_id: businessId,
             location
         });
 

@@ -14,10 +14,10 @@ const editBusiness = async(req, res) => {
             ...(businessInput.name && { name: businessInput.name }),
             ...(businessInput.location && { location: businessInput.location }),
             ...(businessInput.category && { category: businessInput.category }),
-            ...(businessInput.contact_info && { contact_info: businessInput.contact_info }),
+            ...(businessInput.contactInfo && { contactInfo: businessInput.contactInfo }),
             ...(businessInput.tags && { tags: businessInput.tags }),
-            creation_date: new Date(),
-            updated_date: new Date(),
+            creationDate: new Date(),
+            updatedDate: new Date(),
         };
 
         const updatedBusiness = await businessService.updateBusiness(businessId, updatedData)

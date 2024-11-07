@@ -5,7 +5,7 @@ const userService = require('../../services/userServices/userService');
 const UserOutputDTO = require('../../dto/user/userOutputDTO');
 
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, passwordHash } = req.body;
 
     try {
 
@@ -13,12 +13,12 @@ const loginUser = async (req, res) => {
 
         await validateUserExists(email);
 
-        await validatePassword(password, user.password_hash)
+        await validatePassword(passwordHash, user.passwordHash)
 
-        await userService.updateUser(user.user_id, {last_login: new Date()});
+        await userService.updateUser(user.id, {lastLogin: new Date()});
 
         const token = generateToken({
-            userId: user.user_id,
+            userId: user.id,
             username: user.username,
             email: user.email
         });

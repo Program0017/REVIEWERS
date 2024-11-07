@@ -11,7 +11,7 @@ const listOrSearchReviews = async (req, res) => {
         let reviews;
 
         if (!userId && !reviewId && !businessId && !rating && !tags) {
-            reviews = await reviewService.getAllReviews(page, pageSize, { itsHided: true });
+            reviews = await reviewService.getAllReviews(page, pageSize, { isHidden: true });
         } else {
             reviews = await reviewService.searchReviews({ 
                 userId, 
@@ -19,7 +19,7 @@ const listOrSearchReviews = async (req, res) => {
                 businessId, 
                 rating, 
                 tags, 
-                itsHided: true 
+                isHidden: false 
             }, page, pageSize);
 
             if (reviews.length === 0) {

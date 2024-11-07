@@ -13,10 +13,10 @@ const toggleUserActiveStatus = async (req, res) => {
             return res.status(404).json({ message: messageService.getErrorMessage('USERS_NOT_FOUND') });
         }
 
-        const newStatus = !user.itsActive;
+        const newStatus = !user.isActive;
         action = newStatus ? 'activated' : 'deactivated';
 
-        const updatedUser = await userService.updateUser(user.user_id, { itsActive: newStatus });
+        const updatedUser = await userService.updateUser(user.id, { isActive: newStatus });
 
         res.status(200).json({
             message: messageService.getSuccessMessage('USER_TOGGLED'), // New message key

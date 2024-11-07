@@ -13,10 +13,10 @@ const toggleRewardActiveStatus = async (req, res) => {
             return res.status(404).json({ message: messageService.getErrorMessage('REWARD_NOT_FOUND') });
         }
 
-        const newStatus = !reward.itsAvailable;
+        const newStatus = !reward.isAvailable;
         action = newStatus ? 'activated' : 'deactivated';
 
-        const updatedreward = await rewardService.updateReward(reward.reward_id, { itsAvailable: newStatus });
+        const updatedreward = await rewardService.updateReward(reward.id, { isAvailable: newStatus });
 
         res.status(200).json({
             message: messageService.getSuccessMessage('REWARD_STATUS_TOGGLED'), // New message key

@@ -1,13 +1,13 @@
 class BusinessOutputDTO {
     constructor(business) {
-        this.business_id = business.business_id;
+        this.id = business.id;
         this.name = business.name;
         this.location = business.location;
         this.category = business.category;
-        this.average_rating = business.average_rating;
-        this.total_reviews = business.total_reviews;
-        this.contact_info = business.contact_info;
-        this.creation_date = business.creation_date;
+        this.averageRating = business.averageRating;
+        this.totalReviews = business.totalReviews;
+        this.contactInfo = business.contactInfo;
+        this.creationDate = business.creationDate;
         this.tags = business.tags;
     }
 

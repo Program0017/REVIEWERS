@@ -1,9 +1,9 @@
 class ReviewUpdateDTO {
-    constructor({ rating, title, content, image_url, tags }) {
+    constructor({ rating, title, content, imageUrl, tags }) {
         this.rating = rating;
         this.title = title;
         this.content = content;
-        this.image_url = image_url;
+        this.imageUrl = imageUrl;
         this.tags = tags;
     }
 
@@ -12,7 +12,7 @@ class ReviewUpdateDTO {
             rating: body.rating,
             title: body.title,
             content: body.content,
-            image_url: body.image_url,
+            imageUrl: body.imageUrl,
             tags: body.tags,
         });
     }

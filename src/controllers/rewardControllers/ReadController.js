@@ -3,22 +3,22 @@ const messageService = require('../../services/userServices/messageService');
 const RewardOutputDTO = require('../../dto/reward/RewardOutputDTO'); // Asegúrate de tener un DTO similar
 
 const listOrSearchRewards = async (req, res) => {
-    const { rewardId, type, isRedeemed, itsAvailable,   } = req.query; 
+    const { rewardId, category, isRedeemed, isAvailable,   } = req.query; 
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
 
     try {
         let rewards;
 
-        if (!rewardId && !type && isRedeemed === undefined && itsAvailable === undefined) {
-            rewards = await rewardService.getAllRewards(page, pageSize, { itsAvailable: true });
+        if (!rewardId && !category && isRedeemed === undefined && isAvailable === undefined) {
+            rewards = await rewardService.getAllRewards(page, pageSize, { isAvailable: true });
         } else {
             // Busca recompensas basadas en los parámetros proporcionados
             rewards = await rewardService.searchRewards({ 
                 rewardId, 
-                type, 
+                category, 
                 isRedeemed, 
-                itsAvailable 
+                isAvailable 
             }, page, pageSize);
 
             // Si no se encuentran recompensas

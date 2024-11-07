@@ -17,13 +17,13 @@ const editUserProfile = async (req, res) => {
             ...(userInput.username && { username: userInput.username}),
             ...(userInput.email && { email: userInput.email }), 
             bio: userInput.bio,
-            profile_picture_url: userInput.profile_picture_url,
-            updated_date: new Date(),
+            profilePictureUrl: userInput.profilePictureUrl,
+            updatedDate: new Date(),
         }
 
         if (userInput.newPassword) {
             const hashedPassword = await hashPassword(userInput.newPassword);
-            updatedData.password_hash = hashedPassword;
+            updatedData.passwordHash = hashedPassword;
         }
 
 

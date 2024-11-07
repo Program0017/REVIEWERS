@@ -3,27 +3,36 @@ const db = new PrismaClient();
 
 const reviewService = {
     async createReview(data) {
+        const { userId, businessId, ...restData } = data;
+
         return await db.review.create({
-            data
+            data: {
+                ...restData,
+                user: {
+                    connect: { id: userId }
+                },
+                business: {
+                    connect: {id: businessId}
+                }
+            }
         });
     },
 
-    // Buscar usuario por ID
+    // Buscar reseña por ID
     async findReviewById(reviewId) {
         return await db.review.findUnique({
-            where:
-                { review_id: reviewId }
+            where: { id: reviewId } // Updated to match schema
         });
     },
 
     async validateReviewBusiness(reviewId, businessId) {
         const review = await this.findReviewById(reviewId);
-        
+
         if (!review) {
             throw new Error('Review not found');
         }
 
-        if (review.business_id !== businessId) {
+        if (review.businessId !== businessId) { // Updated to match schema
             throw new Error('Business ID does not match the review');
         }
 
@@ -32,94 +41,87 @@ const reviewService = {
 
     async updateReview(reviewId, updatedData) {
         if (!reviewId) {
-            throw new Error("El reviewId no puede ser undefined.");
+            throw new Error("Review ID cannot be undefined.");
         }
 
         return await db.review.update({
-            where: { review_id: reviewId },
+            where: { id: reviewId }, // Updated to match schema
             data: updatedData,
         });
     },
 
     async searchReviews(filters, page = 1, pageSize = 10) {
         const skip = (page - 1) * pageSize;
-        const take = pageSize;
 
-        const { userId, reviewId, bussinesId, rating, tags } = filters;
+        const { userId, reviewId, businessId, rating, tags } = filters;
 
-        const conditions = [];
+        const conditions = {
+            isHidden: false
+        };
 
-        if (userId) conditions.push({ user_id: parseInt(userId, 10) });
-        if (reviewId) conditions.push({ review_id: parseInt(reviewId, 10) });
-        if (bussinesId) conditions.push({ bussines_id: parseInt(bussinesId, 10) });
-        if (rating) conditions.push({ rating: parseFloat(rating) });
-        if (tags) conditions.push({ tags: { contains: tags } });
-
-        conditions.push({ itsHided: false });
-
+        if (userId) conditions.userId = parseInt(userId, 10); // Updated to match schema
+        if (reviewId) conditions.id = parseInt(reviewId, 10); // Updated to match schema
+        if (businessId) conditions.businessId = parseInt(businessId, 10); // Updated to match schema
+        if (rating) conditions.rating = parseFloat(rating);
+        if (tags) conditions.tags = { contains: tags }; // Presuming tags is a string field
 
         return await db.review.findMany({
-            where: {
-                AND: conditions,
-            },
+            where: conditions,
             select: {
-                review_id: true,
-                user_id: true,
-                business_id: true,
+                id: true, // Updated to match schema
+                userId: true, // Updated to match schema
+                businessId: true, // Updated to match schema
                 rating: true,
                 title: true,
                 content: true,
                 tags: true,
-                creation_date: true,
-                updated_date: true,
+                creationDate: true, // Updated to match schema
+                updatedDate: true, // Updated to match schema
             },
             skip,
-            take,
+            take: pageSize,
         });
     },
 
-
-
     async getAllReviews(page = 1, pageSize = 10) {
         const skip = (page - 1) * pageSize;
-        const take = pageSize;
 
         return await db.review.findMany({
             where: {
-                itsHided: false
+                isHidden: false // Updated to match schema
             },
             select: {
-                review_id: true,
-                user_id: true,
-                bussines_id: true,
+                id: true, // Updated to match schema
+                userId: true, // Updated to match schema
+                businessId: true, // Updated to match schema
                 rating: true,
                 title: true,
                 content: true,
                 tags: true,
-                created_date: true,
-                updated_date: true,
+                creationDate: true, // Updated to match schema
+                updatedDate: true, // Updated to match schema
             },
             skip,
-            take,
+            take: pageSize,
         });
     },
 
     async updateHelpfulVotes(reviewId, isHelpful, isWithdraw = false) {
-        const review = await db.review.findUnique({ where: { review_id: reviewId } });
+        const review = await db.review.findUnique({ where: { id: reviewId } }); // Updated to match schema
 
-        if (isWithdraw) {
-            await db.review.update({
-                where: { review_id: reviewId },
-                data: { helpful_votes: review.helpful_votes - (isHelpful ? 1 : 0) },
-            });
-        } else {
-            await db.review.update({
-                where: { review_id: reviewId },
-                data: { helpful_votes: review.helpful_votes + (isHelpful ? 1 : -1) },
-            });
+        if (!review) {
+            throw new Error('Review not found');
         }
-    }
 
+        const newHelpfulVotes = isWithdraw
+            ? review.helpfulVotes - (isHelpful ? 1 : 0)
+            : review.helpfulVotes + (isHelpful ? 1 : -1);
+
+        await db.review.update({
+            where: { id: reviewId }, // Updated to match schema
+            data: { helpfulVotes: newHelpfulVotes }, // Updated to match schema
+        });
+    }
 };
 
 module.exports = reviewService;

@@ -11,12 +11,12 @@ const createBusiness = async (req, res) => {
         const business = await businessService.createBusiness({
             name: businessInput.name,
             location: businessInput.location,
-            category: businessInput.category,
-            average_rating: businessInput.average_rating || 0.00, // Default value if not provided
-            total_reviews: businessInput.total_reviews || 0, // Default value if not provided
-            contact_info: businessInput.contact_info,
-            tags: businessInput.tags,
-            creation_date: new Date() // Current date as the creation date
+            averageRating: businessInput.averageRating || 0.00, // Default value if not provided
+            totalReviews: businessInput.totalReviews || 0, // Default value if not provided
+            contactInfo: businessInput.contactInfo,
+            //tags: businessInput.tags,
+            categoryId: businessInput.categoryId,
+            creationDate: new Date() // Current date as the creation date
         });
 
         const Response = businessOutputDTO.format(business);
