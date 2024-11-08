@@ -3,6 +3,7 @@ const ERROR_MESSAGES = {
     USERNAME_IN_USE: "The provided username is already in use.",
     REGISTRATION_FAILED: "An error occurred while registering the user.",
     INTERNAL_SERVER_ERROR: "An internal server error has occurred.",
+    TAG_ASSIGN_FAILED: "An error occurred while assigning the tag to the user.",
 
     PROFILE_NOT_UPDATED: "An error occurred while updating the user profile.",
 
@@ -33,6 +34,7 @@ const ERROR_MESSAGES = {
     BUSINESSES_NOT_FOUND: "No business were found.",
 
     MISSING_SEARCH_PARAMETERS: "Not found search parameters",
+    USER_ID_REQUIRED: "Required user id to update",
 
     REWARD_CREATION_FAILED: "An error occurred while creating the reward.",
     REWARD_UPDATE_FAILED: "An error occurred while updatin the reward.",
@@ -56,6 +58,8 @@ const ERROR_MESSAGES = {
     BUSINESS_NOT_UPDATED:  "Failed to updated the reward point",
     ACTION_POINTS_GET_FAILED: "Failed to get the reward points",
     ACTION_POINT_NOT_FOUND: "No reward point were found",
+
+    INVALID_TOKEN_OR_PASSWORD_RESET_FAILED: "Failed to change the password"
     
 };
 

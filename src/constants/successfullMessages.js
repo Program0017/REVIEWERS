@@ -4,6 +4,7 @@ const SUCCESSFULL_MESSAGES = {
     LOGOUT_SUCCESSFUL: "Logout successful.",
     SEARCH_RESULTS: "Search results retrieved successfully.",
     USERS_RETRIEVED: "List of users retrieved successfully.",
+    TAG_ASSIGNED_SUCCESSFULLY: "Tag assigned to the user successfully.",
 
     USER_STATUS_TOGGLED: "User status toggled successfully.",
     USERS_LISTED: "Users listed successfully.",
@@ -38,6 +39,7 @@ const SUCCESSFULL_MESSAGES = {
     USER_TAGS_RETRIEVED_SUCCESSFULLY: "All tags of this user retrieved successfully.",
     BUSINESS_TAGS_RETRIEVED_SUCCESSFULLY: "All tags of this business retrieved successfully.",
     TAG: "Tag udated successfully.",
+    
 
     CATEGORY_CREATED: "Type created succesfully",
     TYPES_RETRIEVED_SUCCESSFULLY: "All the types of business retrieved successfully.",
@@ -49,6 +51,9 @@ const SUCCESSFULL_MESSAGES = {
     ACTION_POINTS_RETRIEVED_SUCCESSFULLY: "All the reward points retrieved successfully.",
     ACTION_POINT_FOUND: "Reward point found.",
     ACTION_POINTS_FOUND: "Reward points found.",
+
+    RECOVERY_EMAIL_SENT: "Recovery password send",
+    PASSWORD_CHANGED_SUCCESSFULLY: "Password changed successfuly"
 };
 
 module.exports = SUCCESSFULL_MESSAGES;

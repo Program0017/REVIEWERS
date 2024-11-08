@@ -16,7 +16,8 @@ const editUserProfile = async (req, res) => {
         const updatedData = {
             ...(userInput.username && { username: userInput.username}),
             ...(userInput.email && { email: userInput.email }), 
-            bio: userInput.bio,
+            ...(userInput.bio && { bio: userInput.bio }),
+            ...(userInput.profilePictureUrl && { profilePictureUrl: userInput.profilePictureUrl }),
             profilePictureUrl: userInput.profilePictureUrl,
             updatedDate: new Date(),
         }

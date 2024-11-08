@@ -1,16 +1,17 @@
 const { PrismaClient } = require('@prisma/client');
+const messageService = require('../../services/userServices/messageService');
 const db = new PrismaClient();
 
 const userService = {
-    // Crear usuario
+    // Create a new user
     async createUser(userData) {
         return await db.user.create({ data: userData });
     },
 
-    // Actualizar usuario
+    // Update a user
     async updateUser(userId, updatedData) {
         if (!userId) {
-            throw new Error("El userId no puede ser undefined.");
+            throw new Error(messageService.getErrorMessage('USER_ID_REQUIRED'));
         }
         return await db.user.update({
             where: { id: userId },
@@ -18,7 +19,17 @@ const userService = {
         });
     },
 
-    // Buscar usuarios por 'username', 'email' o 'tags', con paginación
+    // Find a user by email
+    async findUserByEmail(email) {
+        return await db.user.findUnique({ where: { email } });
+    },
+
+    // Find a user by ID
+    async findUserById(userId) {
+        return await db.user.findUnique({ where: { id: userId } });
+    },
+
+    // Search users by 'username', 'email', or 'tags', with pagination
     async searchUsers(query, page = 1, pageSize = 10) {
         const skip = (page - 1) * pageSize;
         const take = pageSize;
@@ -30,7 +41,7 @@ const userService = {
                     { email: { contains: query } },
                     { tags: { some: { tag: { contains: query } } } },
                 ],
-                isActive: true,  // Solo usuarios activos
+                isActive: true,  // Only active users
             },
             select: {
                 username: true,
@@ -43,29 +54,8 @@ const userService = {
             take,
         });
     },
-
-    // Desactivar usuario (actualizando campo 'isActive' a falso)
-    async deactivateUser(userId) {
-        if (!userId) {
-            throw new Error("El userId no puede ser undefined.");
-        }
-        return await db.user.update({
-            where: { id: userId },
-            data: { isActive: false },  // Actualizar campo 'isActive'
-        });
-    },
-
-    // Buscar usuario por email
-    async findUserByEmail(email) {
-        return await db.user.findUnique({ where: { email } });
-    },
-
-    // Buscar usuario por ID
-    async findUserById(userId) {
-        return await db.user.findUnique({ where: { id: userId } });
-    },
-
-    // Obtener todos los usuarios
+    
+    // Get all users
     async getAllUsers() {
         const allUsers = await db.user.findMany({
             select: {
@@ -77,31 +67,42 @@ const userService = {
             },
         });
 
-        // Verificar si existen usuarios registrados
+        // Check if there are any registered users
         if (allUsers.length === 0) {
-            throw new Error('No hay usuarios registrados para notificar.');
+            throw new Error(messageService.getErrorMessage('USERS_NOT_FOUND'));
         }
-
         return allUsers;
     },
 
-    // Agregar puntos de recompensa
+    // Deactivate a user (updating 'isActive' field to false)
+    async deactivateUser(userId) {
+        if (!userId) {
+            throw new Error(messageService.getErrorMessage('USER_ID_REQUIRED'));
+        }
+        return await db.user.update({
+            where: { id: userId },
+            data: { isActive: false },  // Set 'isActive' to false
+        });
+    },
+
+
+    // Add reward points
     async addActionPoint(userId, ActionPoints) {
         try {
             if (!userId) {
-                throw new Error('UserId is required to add reward points.');
+                throw new Error(messageService.getErrorMessage('USER_ID_REQUIRED'));
             }
-    
+
             const user = await db.user.findUnique({
-                where: { id: userId },  // Asegúrate de que `userId` está presente
+                where: { id: userId },
             });
-    
+
             if (!user) {
-                throw new Error('User not found');
+                throw new Error(messageService.getErrorMessage('USER_NOT_FOUND'));
             }
-    
-            const newTotalPoints = (user.points || 0) + ActionPoints;  // Manejar si `points` es nulo
-    
+
+            const newTotalPoints = (user.points || 0) + ActionPoints;
+
             const updatedUser = await db.user.update({
                 where: { id: userId },
                 data: {
@@ -109,21 +110,20 @@ const userService = {
                     updatedDate: new Date(),
                 },
             });
-    
+
             return updatedUser;
         } catch (error) {
-            console.error('Error updating the user points:', error);
-            throw new Error('Failed to update user points');
+            throw new Error(messageService.getErrorMessage('REWARD_UPDATE_FAILED'));
         }
     },
 
-    // Quitar un punto de recompensa
+    // Remove one reward point
     async removeActionPoint(userId) {
         try {
             const user = await db.user.findUnique({ where: { id: userId } });
 
             if (!user) {
-                throw new Error('User not found');
+                throw new Error(messageService.getErrorMessage('USER_NOT_FOUND'));
             }
             const newTotalPoints = user.points - 1;
 
@@ -137,15 +137,14 @@ const userService = {
 
             return updatedUser;
         } catch (error) {
-            console.error('Error updating the user points:', error);
-            throw new Error('Failed to update user points');
+            throw new Error(messageService.getErrorMessage('REWARD_UPDATE_FAILED'));
         }
     },
 
-    // Agregar una referencia (relación entre usuario referido y el que refirió)
+    // Add a referral (relationship between the referred user and the referrer)
     async addReferral(referrerId, referredUserId) {
         if (!referrerId || !referredUserId) {
-            throw new Error("Los IDs no pueden ser undefined.");
+            throw new Error(messageService.getErrorMessage('USER_ID_REQUIRED'));
         }
 
         return await db.user.update({
@@ -158,21 +157,22 @@ const userService = {
         });
     },
 
+
+    // Assign a tag to a user
     async assignTagToUser(userId, tagId) {
-          // Asignar el tag al usuario
-          const updatedUser = await db.user.update({
+        const updatedUser = await db.user.update({
             where: { id: userId },
             data: {
-              tags: {
-                connect: { id: tagId }, // Conectar el tag con el usuario
-              },
+                tags: {
+                    connect: { id: tagId },
+                },
             },
             include: {
-              tags: true, // Incluir los tags para verificar la actualización
+                tags: true, // Include tags to verify the update
             },
-          });
-          return updatedUser;
-      },
+        });
+        return updatedUser;
+    },
 };
 
 module.exports = userService;

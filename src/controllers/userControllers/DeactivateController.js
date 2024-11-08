@@ -1,5 +1,7 @@
 const userService = require('../../services/userServices/userService');
 const messageService = require('../../services/userServices/messageService'); // Importing message service
+const UserOutputDTO = require('../../dto/user/userOutputDTO');
+
 
 const toggleUserActiveStatus = async (req, res) => {
     const userId = req.user.userId;
@@ -18,9 +20,11 @@ const toggleUserActiveStatus = async (req, res) => {
 
         const updatedUser = await userService.updateUser(user.id, { isActive: newStatus });
 
+        const formattedUser = UserOutputDTO.format(updatedUser);
+
         res.status(200).json({
             message: messageService.getSuccessMessage('USER_TOGGLED'), // New message key
-            user: updatedUser,
+            user: formattedUser,
         });
     } catch (error) {
         console.error(`Error while ${action || 'processing'} the user:`, error);

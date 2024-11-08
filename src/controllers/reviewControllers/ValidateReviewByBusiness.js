@@ -1,19 +1,22 @@
 const reviewService = require('../../services/reviewServices/reviewService');
 const messageService = require('../../services/userServices/messageService');
 const { addActionPoint } = require('../../services/userServices/userService');
-
+const ReviewOutputDTO = require('../../dto/review/reviewOutputDTO');
+const actionPointService = require('../../services/AuxiliarServices/ActionPointServices/ActionPointService');
 
 const validateReviewBusiness = async (req, res) => {
     const { reviewId, businessId } = req.params;
-
+    console.log(req.params);
+    
     try{
         const review = await reviewService.validateReviewBusiness(parseInt(reviewId), parseInt(businessId));
-
+        console.log(review);
+        
         const validatedReview = await actionPointService.findByAction('VALIDATE_REVIEW');
 
         await addActionPoint(review.id, validatedReview)
 
-        const updatedReview = await reviewService.updateReview(review.review_id, { isValidated: true });
+        const updatedReview = await reviewService.updateReview(review.id, { isValidated: true });
 
         const reviewOutput = ReviewOutputDTO.format(updatedReview);
 
