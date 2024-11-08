@@ -20,10 +20,10 @@ const app = express();
 app.use(express.json());
 
 // Configuración de rutas
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/business', businessRoutes);
-app.use('/api/auth', authRoutes);
 app.use('/api/reward', rewardRoutes);
 app.use('/api/auxiliars', auxiliarRoutes);
 

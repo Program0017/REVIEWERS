@@ -4,22 +4,23 @@ class UserOutputDTO {
         this.username = user.username;
         this.email = user.email;
         this.bio = user.bio;
-        this.profilePictureUrl = user.profilePictureUrl; // Consistencia en el nombre de las propiedades
-        this.registrationDate = user.registrationDate; // Cambiado a camelCase
-        this.updatedDate = user.updatedDate;
-        this.lastLogin = user.lastLogin;
-        this.isActive = user.isActive; // Cambiado a camelCase
-        this.isReported = user.isReported; // Añadido para incluir la propiedad isReported
-        this.points = user.points; // Añadido para incluir puntos
+        this.profilePictureUrl = user.profilePictureUrl;
+        this.isActive = user.isActive; // Estado activo
+        this.isReported = user.isReported; // Estado reportado
+        this.points = user.points; // Puntos del usuario
+        this.referredById = user.referredById; // ID del usuario que refirió (si existe)
+        this.tags = user.tags ? user.tags.map(tag => tag.tag) : []; // Etiquetas asociadas al usuario
     }
 
+    // Formatear para una lista de usuarios o un solo usuario
     static format(user) {
         if (Array.isArray(user)) {
+            // Si es un array de usuarios, formatear cada uno con el constructor
             return user.map(u => new UserOutputDTO(u));
         } else {
+            // Si es un solo usuario, formatearlo directamente
             return new UserOutputDTO(user);
         }
     }
 }
-
 module.exports = UserOutputDTO;

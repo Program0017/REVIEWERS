@@ -47,9 +47,8 @@ const registerUser = async (req, res) => {
 
             if (referralAction && newUserAction) {
                 await userService.addActionPoint(referredById, referralAction.points);
-                // Asigna 10 puntos al nuevo usuario
+
                 await userService.addActionPoint(user.id, newUserAction.points);
-                // Asigna 20 puntos al usuario original que refiere
             }
         } 
         await messageService.sendConfirmationEmail(user);
