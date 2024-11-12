@@ -43,6 +43,7 @@ const ERROR_MESSAGES = {
     REWARD_CLAIM_FAILED: "Failed to claim the reward",
 
     TAG_FAILED: "Failed to create the tag",
+    TAG_ID_REQUIRED: "Tag id required",
     NO_TAGS_FOUND: "No tags were found.",
     TAGS_GET_FAILED: "Failed to get the tags",
     NO_TAGS_FOUND_FOR_USER: "No tags were found for this user",
@@ -59,7 +60,8 @@ const ERROR_MESSAGES = {
     ACTION_POINTS_GET_FAILED: "Failed to get the reward points",
     ACTION_POINT_NOT_FOUND: "No reward point were found",
 
-    INVALID_TOKEN_OR_PASSWORD_RESET_FAILED: "Failed to change the password"
+    INVALID_TOKEN_OR_PASSWORD_RESET_FAILED: "Failed to change the password",
+    USER_CANNOT_REFER_THEMSELF: "User cannot refer themself",
     
 };
 

@@ -1,6 +1,6 @@
 const { usernameValidator, emailValidator, passwordValidator, bioValidator, profilePictureUrlValidator, referredByIdValidator, idValidator } = require('../validators/userValidators/UserDataValidations');
 const { validateUniqueEmail, validateUniqueUsername } = require('../validators/userValidators/userValidations');
-const ERROR_MESSAGES = require('../constants/errorMessages');
+const messageService = require('../services/userServices/messageService');
 const Joi = require('joi');
 
 const userDataRegisterValidationMiddleware = async (req, res, next) => {
@@ -8,11 +8,11 @@ const userDataRegisterValidationMiddleware = async (req, res, next) => {
 
     // Validar unicidad de email y username
     if (await validateUniqueEmail(email)) {
-        return res.status(400).json({ message: ERROR_MESSAGES.EMAIL_IN_USE });
+        return res.status(400).json({ message: messageService.getErrorMessage('EMAIL_IN_USE') });
     }
 
     if (await validateUniqueUsername(username)) {
-        return res.status(400).json({ message: ERROR_MESSAGES.USERNAME_IN_USE });
+        return res.status(400).json({ message: messageService.getErrorMessage('USERNAME_IN_USE') });
     }
 
     // Validación de los datos con Joi

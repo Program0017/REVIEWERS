@@ -3,6 +3,8 @@ const messageService = require('../../services/userServices/messageService');
 const ReviewUpdateDTO = require('../../dto/review/reviewUpdateDTO');
 const ReviewOutputDTO = require('../../dto/review/reviewOutputDTO');
 const authMiddleware = require('../../middleware/authMiddleware');
+const reviewValidatorMiddleware = require('../../middleware/reviewValidatorMiddleware');
+
 
 const editReview = async (req, res) => {
     const reviewId = req.body.reviewId; 
@@ -35,5 +37,6 @@ const editReview = async (req, res) => {
 
 module.exports = {
     authMiddleware,
+    reviewValidatorMiddleware,
     editReview
 };

@@ -4,6 +4,8 @@ const RewardOutputDTO = require('../../dto/reward/RewardOutputDTO');
 const messageService = require('../../services/userServices/messageService');
 const userService = require('../../services/userServices/userService');
 const emailService = require('../../services/userServices/emailService');
+const rewardValidatorMiddleware = require('../../middleware/rewardValidatorMiddleware');
+
 
 const createReward = async(req, res) => {
     const rewardInputDTO = RewardInputDTO.fromRequestBody(req.body);
@@ -36,5 +38,6 @@ const createReward = async(req, res) => {
 };
 
 module.exports = {
-    createReward
+    createReward,
+    rewardValidatorMiddleware
 };

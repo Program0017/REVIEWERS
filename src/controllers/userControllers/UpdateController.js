@@ -1,7 +1,6 @@
 const userService = require('../../services/userServices/userService');
 const userValidationMiddleware = require('../../middleware/userValidationMiddleware')
 const messageService = require('../../services/userServices/messageService');
-const SUCCESSFULL_MESSAGES = require('../../constants/successfullMessages')
 const { hashPassword } = require('../../utils/passwordUtils');
 const UserUpdateDTO = require('../../dto/user/userUpdateDTO ');
 const UserOutputDTO = require('../../dto/user/userOutputDTO'); // DTO de salida
@@ -10,7 +9,7 @@ const editUserProfile = async (req, res) => {
     const userId = req.user.userId;
 
     try{
-
+        
         const userInput = UserUpdateDTO.fromRequestBody(req.body);
 
         const updatedData = {

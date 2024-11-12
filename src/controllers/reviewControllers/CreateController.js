@@ -6,7 +6,10 @@ const messageService = require('../../services/userServices/messageService');
 const ReviewInputDTO = require('../../dto/review/reviewInputDTO'); // DTO de entrada
 const ReviewOutputDTO = require('../../dto/review/reviewOutputDTO'); // DTO de salida
 const authMiddleware = require('../../middleware/authMiddleware');
+const reviewValidatorMiddleware = require('../../middleware/reviewValidatorMiddleware');
 const actionPointService = require('../../services/AuxiliarServices/ActionPointServices/ActionPointService');
+
+
 
 const createReview = async(req, res) =>{
     const reviewInput = ReviewInputDTO.fromRequestBody(req.body);
@@ -51,5 +54,6 @@ const createReview = async(req, res) =>{
 
 module.exports = {
     authMiddleware,
+    reviewValidatorMiddleware,
     createReview
 };

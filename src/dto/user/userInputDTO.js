@@ -17,7 +17,7 @@ class UserInputDTO {
             passwordHash: body.passwordHash,
             bio: body.bio,
             profilePictureUrl: body.profilePictureUrl,
-            referredById: body.referredById // Mapeo del campo que llega en snake_case
+            referredById: body.referredById
         });
     }
 }

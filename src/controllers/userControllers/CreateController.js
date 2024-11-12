@@ -19,10 +19,16 @@ const registerUser = async (req, res) => {
         if (userInput.referredById) {
             const referrer = await userService.findUserById(userInput.referredById);
             if (referrer) {
+                // Verificar si el usuario se está auto-referenciando
+                if (referrer.username === userInput.username) {
+                    throw new Error(messageService.getErrorMessage('USER_CANNOT_REFER_THEMSELF'));
+                }
                 referredById = referrer.id; // Asignar el ID del usuario que refiere
+            } else {
+                throw new Error(messageService.getErrorMessage('REFERRER_NOT_FOUND'));
             }
         }
-
+        
         const user = await userService.createUser({
             username: userInput.username,
             email: userInput.email,
@@ -58,7 +64,7 @@ const registerUser = async (req, res) => {
         res.status(201).json(userResponse);
     } catch (error) {
         console.error(messageService.getErrorMessage('REGISTRATION_FAILED'), error);
-        res.status(500).json({ message: messageService.getErrorMessage('INTERNAL_SERVER_ERROR') });
+        res.status(500).json({ message: messageService.getErrorMessage('INTERNAL_SERVER_ERROR'), error });
     }
 };
 

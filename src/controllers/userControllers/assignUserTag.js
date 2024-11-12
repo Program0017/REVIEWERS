@@ -5,8 +5,6 @@ const UserOutputDTO = require('../../dto/user/userOutputDTO');
 
 const assignTag = async (req, res) => {
     const { userId, tagId } = req.body;
-
-    console.log(req.body);
     
     try {
         const updatedUser = await userService.assignTagToUser(userId, tagId);

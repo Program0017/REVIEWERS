@@ -9,10 +9,11 @@ const reportReviewController = require('../../controllers/reviewControllers/Repo
 const validateReviewBusiness = require('../../controllers/reviewControllers/ValidateReviewByBusiness');
 
 const authMiddleware = require('../../middleware/authMiddleware');
+const reviewValidatorMiddleware = require('../../middleware/reviewValidatorMiddleware');
 
 // Review Routes
-router.post('/', authMiddleware, createReview.createReview);
-router.put('/edit', authMiddleware, updateReview.editReview);
+router.post('/', authMiddleware, reviewValidatorMiddleware, createReview.createReview);
+router.put('/edit', authMiddleware,reviewValidatorMiddleware, updateReview.editReview);
 router.get('/search', authMiddleware, listOrSearchReviews.listOrSearchReviews);
 router.put('/toggle-status/:reviewId', authMiddleware, hideReview.toggleReviewActiveStatus);
 router.post('/:reviewId/vote', authMiddleware, voteOrWithdrawReview.voteOrWithdrawReview);

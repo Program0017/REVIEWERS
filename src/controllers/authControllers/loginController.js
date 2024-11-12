@@ -21,7 +21,7 @@ const loginUser = async (req, res) => {
             userId: user.id,
             username: user.username,
             email: user.email
-        });
+        }); 
         const userResponse = UserOutputDTO.format(user);
 
         res.status(200).json({
