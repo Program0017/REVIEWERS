@@ -8,16 +8,17 @@ const searchBusiness = require('../../controllers/businessControllers/SearchBusi
 const assignTag = require('../../controllers/businessControllers/assignBusinessTag');
 const businessDataValidationMiddleware  = require('../../middleware/businessValidationMiddleware');
 const authMiddleware = require('../../middleware/authMiddleware');
+const { authorize, checkPermission } = require('../../middleware/authorize');
 
 
 
 // Business Routes
 router.post('/business', businessDataValidationMiddleware, authMiddleware, createBusiness.createBusiness);
 router.put('/:businessId',businessDataValidationMiddleware,  authMiddleware, updateBusiness.editBusiness);
-router.put('/toggle-status/:businessId', authMiddleware, deactiveBusiness.toggleBusinessActiveStatus);
+router.put('/toggle-status/:businessId',authorize('admin'), authMiddleware, deactiveBusiness.toggleBusinessActiveStatus);
 router.get('/bigsearch', authMiddleware, listOrSearchBusiness.listOrSearchBusinesses);
 router.get('/search', authMiddleware, searchBusiness.searchBusiness);
-router.post('/assign-tag', authMiddleware, assignTag.assignTag);
+router.post('/assign-tag',authorize('admin'), authMiddleware, assignTag.assignTag);
 
 
 module.exports = router;

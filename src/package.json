@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "nyc": "^17.1.0",
     "prisma": "^5.22.0",
     "supertest": "^7.0.0"
   },

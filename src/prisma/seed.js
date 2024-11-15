@@ -2,6 +2,25 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
+
+	// Create roles
+	await prisma.role.createMany({
+		data: [
+			{ name: 'admin' },
+			{ name: 'reviewer' },
+			{ name: 'user' },
+		],
+		skipDuplicates: true,
+	});
+
+	// Create permises
+	await prisma.permission.createMany({
+		data: [
+			{ name: 'delete-review' },
+			{ name: 'manage-reports' },
+		],
+		skipDuplicates: true,
+	});
 	// Create user tags
 	const foodieTag = await prisma.userTag.create({
 		data: { tag: 'Foodie' },
@@ -182,6 +201,9 @@ async function main() {
 			passwordHash: 'hashedpassword1',
 			bio: 'User bio 1',
 			profilePictureUrl: 'https://example.com/user1.jpg',
+			roles: {
+				connect: { name: 'reviewer' }, // Asignar rol de reviewer
+			},
 			referredById: null,
 		},
 	});
@@ -191,8 +213,11 @@ async function main() {
 			username: 'UserTest2',
 			email: 'user2@example.com',
 			passwordHash: 'hashedpassword2',
-			profilePictureUrl: 'https://example.com/user2.jpg',
 			bio: 'User bio 2',
+			profilePictureUrl: 'https://example.com/user2.jpg',
+			roles: {
+				connect: { name: 'admin' }, // Asignar rol de admin
+			},
 			referredById: user1.id,
 		},
 	});
@@ -204,6 +229,9 @@ async function main() {
 			passwordHash: 'hashedpassword3',
 			profilePictureUrl: 'https://example.com/user3.jpg',
 			bio: 'User bio 3',
+			roles: {
+				connect: { name: 'user' }, // Asignar rol de admin
+			},
 			referredById: user2.id,
 		},
 	});

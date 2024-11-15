@@ -7,6 +7,7 @@ const deactiveUsers = require('../../controllers/userControllers/DeactivateContr
 const assignTag = require('../../controllers/userControllers/assignUserTag');
 
 const authMiddleware = require('../../middleware/authMiddleware');
+const { authorize, checkPermission } = require('../../middleware/authorize');
 
 
 // User Routes
@@ -14,7 +15,7 @@ router.post('/register', registerUser.userValidationMiddleware, registerUser.reg
 router.put('/edit', authMiddleware, editUserProfile.userValidationMiddleware, editUserProfile.editUserProfile);
 router.get('/:userId', authMiddleware, searchUsers.listOrSearchUsers);
 router.put('/toggle-status/:userId', authMiddleware, deactiveUsers.toggleUserActiveStatus);
-router.post('/assign-tag', authMiddleware, assignTag.assignTag);
+router.post('/assign-tag',authorize('admin'), authMiddleware, assignTag.assignTag);
 
 
 module.exports = router;

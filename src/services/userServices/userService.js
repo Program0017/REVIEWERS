@@ -29,6 +29,32 @@ const userService = {
         return await db.user.findUnique({ where: { id: userId } });
     },
 
+    async findUserWithRolesAndPermissions(userId) {
+        try {
+            const user = await db.user.findUnique({
+                where: { id: userId },
+                iinclude: {
+                    roles: {
+                        include: {
+                            permissions: true,
+                        },
+                    },
+                },
+            });
+
+            if (!user) {
+                throw new Error(messageService.getErrorMessage('USER_NOT_FOUND'));
+            }
+
+            return user;
+        } catch (error) {
+            console.error('Error fetching user with roles and permissions:', error);
+            throw new Error(messageService.getErrorMessage('USER_FETCH_FAILED'));
+        }
+    },
+
+
+
     // Search users by 'username', 'email', or 'tags', with pagination
     async searchUsers(query, page = 1, pageSize = 10) {
         const skip = (page - 1) * pageSize;
