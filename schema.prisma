@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+  seed     = "node prisma/seed.js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id                Int      @id @default(autoincrement())
+  username          String   @unique
+  email             String   @unique
+  passwordHash      String
+  profilePictureUrl String
+  bio               String
+  registrationDate  DateTime @default(now())
+  updatedDate       DateTime?
+  lastLogin         DateTime?
+  isActive          Boolean  @default(true)
+  isReported        Boolean  @default(false)
+  points            Int      @default(0)
+
+  // Relaciones
+  reviews           Review[]     
+  reports           Report[]     
+  votes             Vote[]       
+  rewards           Reward[]     @relation("UserRewards")
+  referredById      Int?         
+  referredBy        User?        @relation("UserReferrals", fields: [referredById], references: [id])
+  referrals         User[]       @relation("UserReferrals")
+  tags              UserTag[]
+}
+
+model Review {
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  user            User      @relation(fields: [userId], references: [id])
+  businessId      Int
+  business        Business  @relation(fields: [businessId], references: [id])
+  rating          Int
+  title           String
+  content         String
+  imageUrl        String?  
+  tags            String
+  isValidated     Boolean
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime @updatedAt
+  helpfulVotes    Int      @default(0)
+  isHidden        Boolean  @default(false)
+  isReported      Boolean  @default(false)
+
+  reports         Report[]  
+  votes           Vote[]
+}
+
+model Business {
+  id              Int      @id @default(autoincrement())
+  name            String   @unique
+  location        String
+  categoryId      Int?
+  averageRating   Float    @default(0.00)
+  totalReviews    Int      @default(0)
+  contactInfo     String
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime @updatedAt
+  tags            BusinessTag[]
+  isActive        Boolean  @default(true)
+  isReported      Boolean  @default(false)
+
+  reviews         Review[]
+  category        BusinessCategory? @relation(fields: [categoryId], references: [id])
+
+}
+
+model Vote {
+  id              Int      @id @default(autoincrement())
+  reviewId        Int
+  userId          Int
+  isHelpful       Boolean   
+  creationDate    DateTime @default(now())
+
+  review          Review    @relation(fields: [reviewId], references: [id])
+  user            User      @relation(fields: [userId], references: [id])
+}
+
+model Reward {
+  id              Int      @id @default(autoincrement())
+  pointsNeeded    Int
+  description     String
+  isRedeemed      Boolean  @default(false)
+  creationDate    DateTime @default(now())
+  redeemedDate    DateTime?
+  expirationDate  DateTime 
+  categoryId      Int?   
+  isAvailable     Boolean  @default(true)
+
+  users           User[]   @relation("UserRewards")
+  category        RewardCategory? @relation(fields: [categoryId], references: [id])
+
+}
+
+model Report {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  reviewId        Int
+  reason          String
+  isActive        Boolean  @default(false)
+  reportDate      DateTime @default(now())
+  review          Review   @relation(fields: [reviewId], references: [id])
+  user            User     @relation(fields: [userId], references: [id])
+}
+
+model UserTag {
+  id              Int      @id @default(autoincrement())
+  userId          Int?
+  tag             String
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime?
+
+  user            User?    @relation(fields: [userId], references: [id])
+}
+
+model BusinessTag {
+  id              Int      @id @default(autoincrement())
+  businessId      Int?
+  tag             String
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime?
+
+  businesses      Business[]
+}
+
+model BusinessCategory {
+  id              Int       @id @default(autoincrement())
+  category        String   
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime?
+
+  businesses      Business[]
+}
+
+model RewardCategory {
+  id              Int       @id @default(autoincrement())
+  category        String   
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime?
+
+  rewards         Reward[]
+}
+
+model ActionPoint {
+  id              Int      @id @default(autoincrement())
+  action          String   @unique// Ejemplo: 'Referir nuevos usuarios', 'Crear reseñas', etc.
+  points          Int      // Puntos asignados por la acción
+  creationDate    DateTime @default(now())
+  updatedDate     DateTime?
+}
